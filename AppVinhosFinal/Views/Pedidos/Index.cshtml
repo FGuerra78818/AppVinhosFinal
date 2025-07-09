@@ -1,0 +1,99 @@
+﻿@model IEnumerable<AppVinhosFinal.Models.Pedidos>
+@using AppVinhosFinal.Models
+
+@{
+    ViewData["Title"] = "Pedidos da Minha Quinta";
+}
+
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Pedidos da Minha Quinta</h2>
+            <small class="text-muted">Gerir e visualizar pedidos</small>
+        </div>
+        <a asp-action="Create" asp-controller="Pedidos" class="btn btn-dark">
+            <i class="bi bi-plus-lg me-1"></i> Novo Pedido
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @if (!Model.Any())
+        {
+            <p>Não há pedidos para a sua Quinta.</p>
+        }
+        else
+        {
+            @foreach (var pedido in Model)
+            {
+                <div class="col-12 col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title mb-1">Pedido #@pedido.Id</h5>
+                                    <span>
+                                        @if (@pedido.Estado.ToString() == "Aprovado")
+                                        {
+                                            <span class="badge bg-success">@pedido.Estado</span>
+                                        }
+                                        else if (@pedido.Estado.ToString() == "PorAprovar")
+                                        {
+                                            <span class="badge bg-warning">@pedido.Estado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@pedido.Estado</span>
+                                        }
+                                    </span>
+                                </div>
+
+                                <div class="row text-center mt-3">
+                                    <div class="col">
+                                        <div class="h4 mb-0">@pedido.PedidoVinhos.Sum(pv => pv.Quantidade)</div>
+                                        <small class="text-muted">Total Garrafas</small>
+                                    </div>
+                                    <div class="col">
+                                        <div class="h6 mb-0">@pedido.DataPedido.ToLocalTime().ToString("g")</div>
+                                        <small class="text-muted">Data Pedido</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 d-flex">
+                                <a asp-action="Details" asp-route-id="@pedido.Id"
+                                   class="btn btn-outline-primary flex-fill">
+                                    <i class="bi bi-info-circle me-1"></i>Detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

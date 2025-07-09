@@ -20,11 +20,11 @@ namespace AppVinhosFinal.Entities
         {
             modelBuilder.ApplyConfiguration(new QuintasSeeder());
             modelBuilder.ApplyConfiguration(new VinhosSeeder());
-            modelBuilder.ApplyConfiguration(new VinhosStockSeeder());
             modelBuilder.ApplyConfiguration(new PedidosSeeder());
             modelBuilder.ApplyConfiguration(new PedidoVinhoSeeder());
             modelBuilder.ApplyConfiguration(new LogsCoposSeeder());
             modelBuilder.ApplyConfiguration(new UserAccountSeeder());
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -6,6 +6,8 @@ namespace AppVinhosFinal.Models
     public class PedidoVinho
     {
         [Key]
+        public int Id { get; set; }
+
         [Required]
         public int IdPedido { get; set; }
 

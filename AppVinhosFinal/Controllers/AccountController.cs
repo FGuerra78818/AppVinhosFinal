@@ -30,6 +30,7 @@ namespace AppVinhosFinal.Controllers
             _emailSender = emailSender;
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View(_context.UserAccounts.ToList());
@@ -169,7 +170,7 @@ namespace AppVinhosFinal.Controllers
                     if (user.MustChangePassword)
                         return RedirectToAction(nameof(ChangePassword));
 
-                    return RedirectToAction("SecurePage");
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
                 else
                 {

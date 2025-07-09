@@ -1,38 +1,133 @@
 ﻿@model IEnumerable<AppVinhosFinal.Models.Vinhos>
 
 @{
-    ViewData["Title"] = "Os Meus Vinhos";
+    ViewData["Title"] = "Gestão de Stock";
 }
 
-<h1>Os Meus Vinhos</h1>
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
 
-@if (!Model.Any())
-{
-    <p>Não há vinhos registados para a sua Quinta.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Quantidade Total</th>
-                <th>Quantidade Fria</th>
-                <th>Quantidade Quente</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var vinho in Model)
-            {
-                <tr>
-                    <td>@vinho.Nome</td>
-                    <td>@vinho.Quantidade</td>
-                    <td>@vinho.QuantidadeFria</td>
-                    <td>@vinho.QuantidadeQuente</td>
-                    <td>@vinho.Estado</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Gestão de Stock</h2>
+            <small class="text-muted">Gerir inventário e produtos</small>
+        </div>
+        <a asp-action="Create" class="btn btn-dark">
+            <i class="bi bi-plus-lg me-1"></i> Adicionar Produto
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Produtos em Stock</h5>
+        </div>
+        <div class="card-body">
+            <div class="input-group mb-4">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input id="searchInput" type="text"
+                       class="form-control border-start-0"
+                       placeholder="Pesquisar produtos..." />
+                <button class="btn btn-outline-secondary d-md-none" type="button">
+                    <i class="bi bi-filter"></i>
+                </button>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var vinho in Model)
+                {
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title mb-1">@vinho.Nome</h5>
+                                        <span>
+                                            @if (vinho.Quantidade == 0)
+                                            {
+                                                <span class="badge bg-danger">Sem Stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Em Stock</span>
+                                            }
+                                        </span>
+                                    </div>
+
+                                    <div class="row text-center mt-3">
+                                        <div class="col">
+                                            <div class="h4 mb-0">@vinho.Quantidade</div>
+                                            <small class="text-muted">Total</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h4 text-primary mb-0">@vinho.QuantidadeFria</div>
+                                            <small class="text-muted">Fria</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="h4 text-danger mb-0">@vinho.QuantidadeQuente</div>
+                                            <small class="text-muted">Quente</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 d-flex gap-2">
+                                    <a asp-action="Edit" asp-route-id="@vinho.Id"
+                                       class="btn btn-outline-secondary flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Editar
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@vinho.Id" method="post" class="flex-fill" onsubmit="return confirm('Tem a certeza que quer remover este vinho?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger w-100">
+                                            <i class="bi bi-trash me-1"></i>Remover
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function() {
+            const search = document.getElementById('searchInput');
+            const cards  = document.querySelectorAll('.card-body h5.card-title');
+            search.addEventListener('input', () => {
+                const term = search.value.toLowerCase();
+                cards.forEach(titleEl => {
+                    const card = titleEl.closest('.col-12');
+                    const name = titleEl.textContent.toLowerCase();
+                    card.style.display = name.includes(term) ? '' : 'none';
+                });
+            });
+        })();
+    </script>
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppVinhosFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250709130601_f1")]
+    [Migration("20250709183248_f1")]
     partial class f1
     {
         /// <inheritdoc />
@@ -71,7 +71,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 7, 9, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@vinhos.pt",
                             MustChangePassword = false,
                             Password = "Admin123!",
@@ -82,7 +82,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 7, 9, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "staff01@vinhos.pt",
                             MustChangePassword = false,
                             Password = "Staff123!",
@@ -93,24 +93,46 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 7, 9, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "guest@vinhos.pt",
+                            CreatedAt = new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "visit1@vinhos.pt",
                             MustChangePassword = true,
                             Password = "Guest123!",
                             QuintaId = 2,
                             Role = "User",
-                            UserName = "visitante"
+                            UserName = "visitante1"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 7, 8, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             Email = "user01@vinhos.pt",
                             MustChangePassword = false,
                             Password = "User01!",
                             QuintaId = 1,
                             Role = "User",
                             UserName = "user01"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Unspecified),
+                            Email = "convid@vinhos.pt",
+                            MustChangePassword = false,
+                            Password = "Conv123!",
+                            QuintaId = 5,
+                            Role = "User",
+                            UserName = "convidado"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Unspecified),
+                            Email = "guest2@vinhos.pt",
+                            MustChangePassword = true,
+                            Password = "G2pass!",
+                            QuintaId = 6,
+                            Role = "User",
+                            UserName = "guest2"
                         });
                 });
 
@@ -140,33 +162,66 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 1,
                             Comprador = "Cliente X",
-                            DataHoraVenda = new DateTime(2025, 7, 9, 10, 15, 0, 0, DateTimeKind.Unspecified),
+                            DataHoraVenda = new DateTime(2025, 7, 11, 10, 15, 0, 0, DateTimeKind.Unspecified),
                             QuantidadeVendida = 12
                         },
                         new
                         {
                             Id = 2,
-                            DataHoraVenda = new DateTime(2025, 7, 9, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataHoraVenda = new DateTime(2025, 7, 11, 11, 0, 0, 0, DateTimeKind.Unspecified),
                             QuantidadeVendida = 8
                         },
                         new
                         {
                             Id = 3,
                             Comprador = "Cliente Y",
-                            DataHoraVenda = new DateTime(2025, 7, 8, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            DataHoraVenda = new DateTime(2025, 7, 10, 18, 30, 0, 0, DateTimeKind.Unspecified),
                             QuantidadeVendida = 25
                         },
                         new
                         {
                             Id = 4,
                             Comprador = "Cliente Z",
-                            DataHoraVenda = new DateTime(2025, 7, 7, 20, 45, 0, 0, DateTimeKind.Unspecified),
+                            DataHoraVenda = new DateTime(2025, 7, 9, 20, 45, 0, 0, DateTimeKind.Unspecified),
                             QuantidadeVendida = 5
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Comprador = "Cliente W",
+                            DataHoraVenda = new DateTime(2025, 7, 9, 19, 20, 0, 0, DateTimeKind.Unspecified),
+                            QuantidadeVendida = 18
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Comprador = "Sem Venda",
+                            DataHoraVenda = new DateTime(2025, 7, 8, 17, 10, 0, 0, DateTimeKind.Unspecified),
+                            QuantidadeVendida = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DataHoraVenda = new DateTime(2025, 7, 7, 16, 5, 0, 0, DateTimeKind.Unspecified),
+                            QuantidadeVendida = 50
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Comprador = "Cliente K",
+                            DataHoraVenda = new DateTime(2025, 7, 6, 21, 30, 0, 0, DateTimeKind.Unspecified),
+                            QuantidadeVendida = 7
                         });
                 });
 
             modelBuilder.Entity("AppVinhosFinal.Models.PedidoVinho", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("IdPedido")
                         .HasColumnType("int");
 
@@ -176,7 +231,9 @@ namespace AppVinhosFinal.Migrations
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
 
-                    b.HasKey("IdPedido");
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdPedido");
 
                     b.HasIndex("IdVinho");
 
@@ -185,27 +242,129 @@ namespace AppVinhosFinal.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 1,
                             IdPedido = 1,
                             IdVinho = 1,
                             Quantidade = 5
                         },
                         new
                         {
+                            Id = 2,
+                            IdPedido = 1,
+                            IdVinho = 3,
+                            Quantidade = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IdPedido = 1,
+                            IdVinho = 5,
+                            Quantidade = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IdPedido = 1,
+                            IdVinho = 12,
+                            Quantidade = 1
+                        },
+                        new
+                        {
+                            Id = 5,
                             IdPedido = 2,
-                            IdVinho = 1,
+                            IdVinho = 2,
                             Quantidade = 10
                         },
                         new
                         {
+                            Id = 6,
+                            IdPedido = 2,
+                            IdVinho = 4,
+                            Quantidade = 4
+                        },
+                        new
+                        {
+                            Id = 7,
                             IdPedido = 3,
-                            IdVinho = 2,
+                            IdVinho = 11,
+                            Quantidade = 20
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IdPedido = 4,
+                            IdVinho = 1,
                             Quantidade = 3
                         },
                         new
                         {
+                            Id = 9,
                             IdPedido = 4,
+                            IdVinho = 6,
+                            Quantidade = 6
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IdPedido = 4,
+                            IdVinho = 9,
+                            Quantidade = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            IdPedido = 5,
+                            IdVinho = 7,
+                            Quantidade = 8
+                        },
+                        new
+                        {
+                            Id = 12,
+                            IdPedido = 5,
+                            IdVinho = 8,
+                            Quantidade = 8
+                        },
+                        new
+                        {
+                            Id = 13,
+                            IdPedido = 6,
+                            IdVinho = 10,
+                            Quantidade = 5
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IdPedido = 6,
                             IdVinho = 3,
-                            Quantidade = 20
+                            Quantidade = 10
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IdPedido = 6,
+                            IdVinho = 12,
+                            Quantidade = 2
+                        },
+                        new
+                        {
+                            Id = 16,
+                            IdPedido = 6,
+                            IdVinho = 5,
+                            Quantidade = 3
+                        },
+                        new
+                        {
+                            Id = 17,
+                            IdPedido = 8,
+                            IdVinho = 1,
+                            Quantidade = 3
+                        },
+                        new
+                        {
+                            Id = 18,
+                            IdPedido = 8,
+                            IdVinho = 1,
+                            Quantidade = 2
                         });
                 });
 
@@ -231,25 +390,49 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 1,
-                            DataPedido = new DateTime(2025, 7, 9, 8, 0, 0, 0, DateTimeKind.Utc),
+                            DataPedido = new DateTime(2025, 7, 11, 10, 0, 0, 0, DateTimeKind.Utc),
                             Estado = 0
                         },
                         new
                         {
                             Id = 2,
-                            DataPedido = new DateTime(2025, 7, 8, 12, 30, 0, 0, DateTimeKind.Utc),
+                            DataPedido = new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc),
                             Estado = 1
                         },
                         new
                         {
                             Id = 3,
-                            DataPedido = new DateTime(2025, 7, 7, 15, 45, 0, 0, DateTimeKind.Utc),
+                            DataPedido = new DateTime(2025, 7, 9, 16, 45, 0, 0, DateTimeKind.Utc),
                             Estado = 2
                         },
                         new
                         {
                             Id = 4,
-                            DataPedido = new DateTime(2025, 7, 6, 10, 15, 0, 0, DateTimeKind.Utc),
+                            DataPedido = new DateTime(2025, 7, 9, 9, 15, 0, 0, DateTimeKind.Utc),
+                            Estado = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DataPedido = new DateTime(2025, 7, 8, 11, 5, 0, 0, DateTimeKind.Utc),
+                            Estado = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DataPedido = new DateTime(2025, 7, 8, 18, 20, 0, 0, DateTimeKind.Utc),
+                            Estado = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DataPedido = new DateTime(2025, 7, 7, 19, 30, 0, 0, DateTimeKind.Utc),
+                            Estado = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            DataPedido = new DateTime(2025, 7, 7, 13, 40, 0, 0, DateTimeKind.Utc),
                             Estado = 1
                         });
                 });
@@ -300,6 +483,18 @@ namespace AppVinhosFinal.Migrations
                             Id = 4,
                             Nome = "Vinhedo Real",
                             NumeroMaxVinhoFrio = 30
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nome = "Encostas do Douro",
+                            NumeroMaxVinhoFrio = 40
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Nome = "Vale do Champagne",
+                            NumeroMaxVinhoFrio = 60
                         });
                 });
 
@@ -370,88 +565,78 @@ namespace AppVinhosFinal.Migrations
                             Nome = "Espumante Real",
                             Quantidade = 80,
                             QuantidadeFria = 80
-                        });
-                });
-
-            modelBuilder.Entity("AppVinhosFinal.Models.VinhosStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdVinho")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdVinho");
-
-                    b.ToTable("VinhosStock");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Estado = 1,
-                            IdVinho = 1,
-                            Quantidade = 10
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Estado = 0,
-                            IdVinho = 1,
-                            Quantidade = 40
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Estado = 1,
-                            IdVinho = 2,
-                            Quantidade = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Estado = 0,
-                            IdVinho = 2,
-                            Quantidade = 30
                         },
                         new
                         {
                             Id = 5,
-                            Estado = 1,
-                            IdVinho = 3,
-                            Quantidade = 60
+                            Estado = 0,
+                            IdQuinta = 5,
+                            Nome = "Loureiro Verde",
+                            Quantidade = 120,
+                            QuantidadeFria = 70
                         },
                         new
                         {
                             Id = 6,
                             Estado = 0,
-                            IdVinho = 3,
-                            Quantidade = 40
+                            IdQuinta = 5,
+                            Nome = "Alvarinho Clássico",
+                            Quantidade = 60,
+                            QuantidadeFria = 30
                         },
                         new
                         {
                             Id = 7,
-                            Estado = 1,
-                            IdVinho = 4,
-                            Quantidade = 80
+                            Estado = 0,
+                            IdQuinta = 2,
+                            Nome = "Tinto Intenso",
+                            Quantidade = 40,
+                            QuantidadeFria = 20
                         },
                         new
                         {
                             Id = 8,
                             Estado = 0,
-                            IdVinho = 4,
-                            Quantidade = 0
+                            IdQuinta = 6,
+                            Nome = "Branco Cítrico",
+                            Quantidade = 25,
+                            QuantidadeFria = 25
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Estado = 1,
+                            IdQuinta = 6,
+                            Nome = "Vinho de Mesa",
+                            Quantidade = 200,
+                            QuantidadeFria = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Estado = 0,
+                            IdQuinta = 3,
+                            Nome = "Tinto Reserva",
+                            Quantidade = 75,
+                            QuantidadeFria = 15
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Estado = 0,
+                            IdQuinta = 4,
+                            Nome = "Branco Seco",
+                            Quantidade = 90,
+                            QuantidadeFria = 45
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Estado = 0,
+                            IdQuinta = 1,
+                            Nome = "Vinha Velha",
+                            Quantidade = 30,
+                            QuantidadeFria = 5
                         });
                 });
 
@@ -492,17 +677,6 @@ namespace AppVinhosFinal.Migrations
                         .IsRequired();
 
                     b.Navigation("Quinta");
-                });
-
-            modelBuilder.Entity("AppVinhosFinal.Models.VinhosStock", b =>
-                {
-                    b.HasOne("AppVinhosFinal.Models.Vinhos", "Vinho")
-                        .WithMany()
-                        .HasForeignKey("IdVinho")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vinho");
                 });
 
             modelBuilder.Entity("AppVinhosFinal.Models.Pedidos", b =>
