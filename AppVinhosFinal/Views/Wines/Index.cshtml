@@ -1,0 +1,38 @@
+﻿@model IEnumerable<AppVinhosFinal.Models.Vinhos>
+
+@{
+    ViewData["Title"] = "Os Meus Vinhos";
+}
+
+<h1>Os Meus Vinhos</h1>
+
+@if (!Model.Any())
+{
+    <p>Não há vinhos registados para a sua Quinta.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Quantidade Total</th>
+                <th>Quantidade Fria</th>
+                <th>Quantidade Quente</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vinho in Model)
+            {
+                <tr>
+                    <td>@vinho.Nome</td>
+                    <td>@vinho.Quantidade</td>
+                    <td>@vinho.QuantidadeFria</td>
+                    <td>@vinho.QuantidadeQuente</td>
+                    <td>@vinho.Estado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

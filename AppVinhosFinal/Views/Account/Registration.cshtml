@@ -1,0 +1,98 @@
+﻿@model RegistrationViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h1>Registo de Utilizador</h1>
+<hr />
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form asp-action="Registration" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Username -->
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <p>Uma password temporária será gerada automaticamente e enviada para o email indicado.</p>
+
+    <!-- Role (apenas visível a Admin) -->
+    @if ((string)ViewBag.CurrentRole == "Admin")
+    {
+        <div class="form-group">
+            <label asp-for="Role"></label>
+            <select asp-for="Role"
+                    id="RoleSelect"
+                    class="form-control"
+                    asp-items="new SelectList(ViewBag.ListRoles)">
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <input asp-for="Role" type="hidden" value="User" />
+    }
+
+    <!-- Quinta (visível a Admin e Staff) -->
+    @if ((string)ViewBag.CurrentRole == "Admin" || (string)ViewBag.CurrentRole == "Staff")
+    {
+        <div class="form-group">
+            <label asp-for="QuintaId">Quinta</label>
+            <select asp-for="QuintaId"
+                    id="QuintaId"
+                    class="form-control"
+                    asp-items="ViewBag.ListQuintas"
+                    asp-option-label="-- Selecione uma Quinta --">
+            </select>
+            <span asp-validation-for="QuintaId" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <input asp-for="QuintaId" type="hidden" value="@(ViewBag.CurrentQuintaId ?? 0)" />
+        <p>Quinta atribuída: <strong>@ViewBag.CurrentQuintaName</strong></p>
+    }
+
+    <button type="submit" class="btn btn-primary">Registar</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        (function() {
+            var roleSelect  = document.getElementById('RoleSelect');
+            var quintaSelect = document.getElementById('QuintaId');
+
+            if (!roleSelect || !quintaSelect) return;
+
+            function toggleQuinta() {
+                if (roleSelect.value === 'Admin') {
+                    quintaSelect.value = '';       // limpa seleção
+                    quintaSelect.disabled = true;  // desactiva dropdown
+                } else {
+                    quintaSelect.disabled = false; // re-activa para User/Staff
+                }
+            }
+
+            roleSelect.addEventListener('change', toggleQuinta);
+            // ao carregar a página, ajusta estado inicial
+            document.addEventListener('DOMContentLoaded', toggleQuinta);
+        })();
+    </script>
+}
