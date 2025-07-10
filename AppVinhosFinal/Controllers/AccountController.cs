@@ -184,7 +184,7 @@ namespace AppVinhosFinal.Controllers
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index");
+            return Redirect("~/");
         }
 
         [Authorize]
@@ -222,7 +222,74 @@ namespace AppVinhosFinal.Controllers
             account.MustChangePassword = false;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(SecurePage));
+            return Redirect("~/");
+        }
+
+        // GET: /Account/Profile
+        [Authorize]
+        public IActionResult Profile()
+        {
+            var currentUserName = User.Identity!.Name!;
+            var account = _context.UserAccounts
+                                  .SingleOrDefault(u => u.UserName == currentUserName);
+            if (account == null) return NotFound();
+
+            var vm = new ProfileViewModel
+            {
+                Email = account.Email,
+                NewUserName = account.UserName
+            };
+            return View(vm);
+        }
+
+        // POST: /Account/Profile
+        [Authorize, HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var currentUserName = User.Identity!.Name!;
+            var account = _context.UserAccounts
+                                  .SingleOrDefault(u => u.UserName == currentUserName);
+            if (account == null) return NotFound();
+
+            // validar uniqueness de UserName
+            if (!string.Equals(model.NewUserName, account.UserName, StringComparison.OrdinalIgnoreCase))
+            {
+                var exists = _context.UserAccounts
+                                     .Any(u => u.UserName == model.NewUserName);
+                if (exists)
+                {
+                    ModelState.AddModelError(nameof(model.NewUserName),
+                        "Já existe um utilizador com esse nome.");
+                    return View(model);
+                }
+            }
+
+            // atualiza campos
+            account.UserName = model.NewUserName;
+            account.Email = model.Email;
+            _context.SaveChanges();
+
+            // Atualiza o cookie de autenticação com o novo UserName
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+                new Claim(ClaimTypes.Name, account.UserName),
+                new Claim(ClaimTypes.Role, account.Role),
+                new Claim("QuintaID", account.QuintaId.ToString())
+            };
+
+            var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(ci));
+
+            TempData["ProfileMessage"] = "Perfil atualizado com sucesso!";
+            return RedirectToAction(nameof(Profile));
         }
 
         private string GenerateSecurePassword(int length)
