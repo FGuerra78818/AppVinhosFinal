@@ -10,6 +10,8 @@ namespace AppVinhosFinal.Models
 
         public DateTime DataPedido { get; set; } = DateTime.UtcNow;
 
+        public DateTime? DataAprovacao { get; set; }
+
         [Required]
         public EstadoPedido Estado { get; set; } = EstadoPedido.PorAprovar;
 

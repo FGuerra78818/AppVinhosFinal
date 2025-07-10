@@ -55,7 +55,7 @@ namespace AppVinhosFinal.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateWineViewModel model)
+        public async Task<IActionResult> Create(CreateWineViewModel model)
         {
             var roleClaim = User.FindFirst(ClaimTypes.Role)!.Value;
             var userQuinta = int.Parse(User.FindFirst("QuintaID")!.Value);
@@ -77,6 +77,35 @@ namespace AppVinhosFinal.Controllers
             var quintaId = (roleClaim == "Admin" || roleClaim == "Staff")
                 ? model.QuintaId!.Value
                 : userQuinta;
+
+            // 1) Verifica existência
+            var existing = await _context.Vinhos
+                .FirstOrDefaultAsync(w =>
+                   w.Nome == model.Nome &&
+                   w.IdQuinta == quintaId);
+
+            if (existing != null)
+            {
+                // existe mas está oculto?
+                if (existing.Estado == EstadoVinho.Hidden)
+                {
+                    // Atualiza o estado
+                    existing.Estado = EstadoVinho.Visible;
+                    // Atualiza as quantidades
+                    existing.Quantidade = model.Quantidade;
+                    existing.QuantidadeFria = model.QuantidadeFria;
+
+                    await _context.SaveChangesAsync();
+
+                    TempData["Message"] = "Vinho existente — quantidades atualizadas.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Erro! Já existe um vinho com esse nome.");
+                    return View(model);
+                }
+            }
 
             // 1) Carrega a quinta e soma a quantidade fria atual
             var quinta = _context.Quintas
@@ -201,6 +230,50 @@ namespace AppVinhosFinal.Controllers
         private bool VinhoExists(int id)
         {
             return _context.Vinhos.Any(e => e.Id == id);
+        }
+
+        // GET: Wines/ConfirmRestore/5
+        public async Task<IActionResult> ConfirmRestore(int id)
+        {
+            var vinho = await _context.Vinhos.FindAsync(id);
+            if (vinho == null) return NotFound();
+            return View(vinho);
+        }
+
+        // POST: Wines/ConfirmRestore/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmRestoreConfirmed(int id)
+        {
+            var vinho = await _context.Vinhos.FindAsync(id);
+            if (vinho != null)
+            {
+                vinho.Estado = EstadoVinho.Visible;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ConfirmEditQuantity), new { id });
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Wines/ConfirmEditQuantity/5
+        public async Task<IActionResult> ConfirmEditQuantity(int id)
+        {
+            var vinho = await _context.Vinhos.FindAsync(id);
+            if (vinho == null) return NotFound();
+            return View(vinho);
+        }
+
+        // POST: Wines/ConfirmEditQuantity/5
+        [HttpPost, ActionName("ConfirmEditQuantity")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ConfirmEditQuantityConfirmed(int id, string choice)
+        {
+            // se o utilizador escolher “sim” redireciona para Edit
+            if (choice == "yes")
+                return RedirectToAction(nameof(Edit), new { id });
+
+            // caso contrário, volta ao index
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,31 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 
 namespace AppVinhosFinal.Models
 {
-    public class CreateWineViewModel : IValidatableObject
+    public class CreateWineViewModel
     {
-        [Required, MaxLength(100)]
-        public string Nome { get; set; }
+        [Required(ErrorMessage = "Nome é obrigatório")]
+        [Display(Name = "Nome do Vinho")]
+        public string Nome { get; set; } = string.Empty;
 
-        [Required, Range(0, int.MaxValue)]
+        [Required(ErrorMessage = "Quantidade é obrigatória")]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantidade deve ser ≥ 0")]
+        [Display(Name = "Quantidade Total")]
         public int Quantidade { get; set; }
 
-        [Required, Range(0, int.MaxValue)]
+        [Required(ErrorMessage = "Quantidade Fria é obrigatória")]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantidade Fria deve ser ≥ 0")]
+        [Display(Name = "Quantidade Fria")]
         public int QuantidadeFria { get; set; }
 
-        // Só preenchido por Admin/Staff via dropdown
+        [Display(Name = "Quinta")]
         public int? QuintaId { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (QuantidadeFria > Quantidade)
-            {
-                yield return new ValidationResult(
-                    "A quantidade fria não pode ser superior à quantidade total.",
-                    new[] { nameof(QuantidadeFria) }
-                );
-            }
-        }
     }
 }

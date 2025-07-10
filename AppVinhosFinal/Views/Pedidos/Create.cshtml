@@ -1,0 +1,211 @@
+﻿@model AppVinhosFinal.Models.Pedidos
+@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Novo Pedido";
+    var vinhos = (List<SelectListItem>)ViewBag.Vinhos;
+    var vinhosData = vinhos.Select(v =>
+    {
+        var text = v.Text;
+        var stock = 0;
+        var m = System.Text.RegularExpressions.Regex.Match(text, @"\bDisp:\s*(\d+)\b");
+        if (m.Success) stock = int.Parse(m.Groups[1].Value);
+        return new { value = v.Value, text = text, stock = stock };
+    });
+    var vinhosJson = JsonSerializer.Serialize(vinhosData);
+}
+
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #f8f9fa;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-link text-decoration-none mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+        <h2 class="mb-0">Novo Pedido</h2>
+        <small class="text-muted">Preencha os detalhes do pedido</small>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-box-seam"></i> Itens do Pedido
+                </h5>
+                <table class="table" id="tabela-itens">
+                    <thead>
+                        <tr>
+                            <th>Vinho</th>
+                            <th>Quantidade</th>
+                            <th>Temperatura</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.PedidoVinhos.Count; i++)
+                        {
+                            var pv = Model.PedidoVinhos[i];
+                            var sel = pv.Tipo.ToString();
+                            <tr>
+                                <td>
+                                    <select name="PedidoVinhos[@i].IdVinho"
+                                            class="form-control"
+                                            data-selected="@pv.IdVinho"
+                                            data-stock="">
+                                    </select>
+                                    <span asp-validation-for="PedidoVinhos[@i].IdVinho"
+                                          class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <input type="number"
+                                           name="PedidoVinhos[@i].Quantidade"
+                                           value="@pv.Quantidade"
+                                           class="form-control"
+                                           min="1"
+                                           max="" />
+                                    <span asp-validation-for="PedidoVinhos[@i].Quantidade"
+                                          class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-outline-info @(sel=="Frio"?"active":"")">
+                                            <input type="radio"
+                                                   name="PedidoVinhos[@i].Tipo"
+                                                   value="Frio"
+                                                   autocomplete="off"
+                                            @(sel == "Frio" ? "checked" : "") />
+                                            <i class="bi bi-snow"></i>
+                                        </label>
+                                        <label class="btn btn-outline-danger @(sel=="Quente"?"active":"")">
+                                            <input type="radio"
+                                                   name="PedidoVinhos[@i].Tipo"
+                                                   value="Quente"
+                                                   autocomplete="off"
+                                            @(sel == "Quente" ? "checked" : "") />
+                                            <i class="bi bi-fire"></i>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="removerLinha(this)">
+                                        ×
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-secondary" onclick="adicionarLinha()">
+                    Adicionar Vinho
+                </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-2">Criar Pedido</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const vinhosData = @Html.Raw(vinhosJson);
+
+            function populaLinha(tr) {
+                const select = tr.querySelector('select');
+                const inputQ = tr.querySelector('input[type=number]');
+                select.innerHTML = '<option value="">-- Seleciona --</option>';
+                vinhosData.forEach(v => {
+                    const o = document.createElement('option');
+                    o.value = v.value;
+                    o.textContent = v.text;
+                    select.appendChild(o);
+                });
+                const selVal = select.getAttribute('data-selected');
+                if (selVal) select.value = selVal;
+                const wine = vinhosData.find(v => v.value === select.value);
+                const stock = wine ? wine.stock : 0;
+                select.dataset.stock = stock;
+                inputQ.max = stock;
+                if (parseInt(inputQ.value) > stock) inputQ.value = stock;
+                select.addEventListener('change', () => {
+                    const w = vinhosData.find(v => v.value === select.value);
+                    const st = w ? w.stock : 0;
+                    select.dataset.stock = st;
+                    inputQ.max = st;
+                    if (parseInt(inputQ.value) > st) inputQ.value = st;
+                });
+            }
+
+            document.querySelectorAll('#tabela-itens tbody tr').forEach(tr => {
+                const select = tr.querySelector('select');
+                select.setAttribute('data-selected', select.getAttribute('data-selected') || '');
+                populaLinha(tr);
+            });
+
+            window.adicionarLinha = () => {
+                const tb = document.querySelector('#tabela-itens tbody');
+                const idx = tb.children.length;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <select name="PedidoVinhos[${idx}].IdVinho" class="form-control" data-selected=""></select>
+                    </td>
+                    <td>
+                        <input type="number" name="PedidoVinhos[${idx}].Quantidade" class="form-control" min="1" max="" />
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-outline-info active">
+                                <input type="radio" name="PedidoVinhos[${idx}].Tipo" value="Frio" autocomplete="off" checked />
+                                <i class="bi bi-snow"></i>
+                            </label>
+                            <label class="btn btn-outline-danger">
+                                <input type="radio" name="PedidoVinhos[${idx}].Tipo" value="Quente" autocomplete="off" />
+                                <i class="bi bi-fire"></i>
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removerLinha(this)">×</button>
+                    </td>`;
+                tb.appendChild(tr);
+                populaLinha(tr);
+            };
+
+            window.removerLinha = btn => {
+                const tb = document.querySelector('#tabela-itens tbody');
+                if (tb.children.length > 1) btn.closest('tr').remove();
+            };
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

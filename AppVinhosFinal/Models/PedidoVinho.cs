@@ -22,5 +22,14 @@ namespace AppVinhosFinal.Models
 
         [Required]
         public int Quantidade { get; set; }
+
+        [Required]
+        public TipoVinho Tipo { get; set; } = TipoVinho.Frio;
+    }
+
+    public enum TipoVinho
+    {
+        Frio = 0,
+        Quente = 1
     }
 }

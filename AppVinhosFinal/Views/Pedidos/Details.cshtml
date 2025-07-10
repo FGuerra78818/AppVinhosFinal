@@ -84,6 +84,14 @@
                 <dd class="col-sm-8">
                     <span class="status-badge status-@Model.Estado">@Model.Estado</span>
                 </dd>
+
+                @if (Model.Estado == EstadoPedido.Aprovado && Model.DataAprovacao.HasValue)
+                {
+                    <dt class="col-sm-4">Data de Aprovação</dt>
+                    <dd class="col-sm-8">
+                        @Model.DataAprovacao.Value.ToLocalTime().ToString("g")
+                    </dd>
+                }
             </dl>
         </div>
     </div>
@@ -103,8 +111,20 @@
                     @foreach (var item in Model.PedidoVinhos)
                     {
                         <li class="list-group-item">
-                            <span><i class="bi bi-dot text-danger"></i> @item.Vinho.Nome</span>
-                            <span class="badge bg-light text-dark rounded-pill">@item.Quantidade</span>
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <div>
+                                    <i class="bi bi-dot text-danger"></i> @item.Vinho.Nome
+                                    @if (item.Tipo == TipoVinho.Frio)
+                                    {
+                                        <i class="fa fa-snowflake ms-2 text-info" title="Frio"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-fire ms-2 text-danger" title="Quente"></i>
+                                    }
+                                </div>
+                                <span class="badge bg-light text-dark rounded-pill">@item.Quantidade</span>
+                            </div>
                         </li>
                     }
                 </ul>
