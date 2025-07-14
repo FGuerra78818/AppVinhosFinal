@@ -58,21 +58,8 @@
             <span asp-validation-for="QuantidadeFria" class="text-danger"></span>
         </div>
 
-        @if ((string)ViewBag.CurrentRole == "Admin" || (string)ViewBag.CurrentRole == "Staff")
-        {
-            <div class="mb-3">
-                <label asp-for="QuintaId" class="form-label">Quinta</label>
-                <select asp-for="QuintaId" class="form-select" asp-items="ViewBag.ListQuintas">
-                    <option value="">-- selecione --</option>
-                </select>
-                <span asp-validation-for="QuintaId" class="text-danger"></span>
-            </div>
-        }
-        else
-        {
-            <input asp-for="QuintaId" type="hidden" value="@(ViewBag.CurrentQuintaId)" />
-            <p>Vinho será adicionado à sua Quinta.</p>
-        }
+        <input asp-for="QuintaId" type="hidden" value="@(ViewBag.CurrentQuintaId)" />
+        <p>O vinho será adicionado à sua Quinta.</p>
 
         <div class="d-grid gap-2 mt-4">
             <button type="submit" class="btn btn-primary">Adicionar</button>

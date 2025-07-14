@@ -1,0 +1,115 @@
+﻿@model IEnumerable<System.Linq.IGrouping<string, AppVinhosFinal.Models.Pedidos>>
+@removeTagHelper "Microsoft.AspNetCore.Mvc.TagHelpers.OptionTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers"
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Pedidos Globais";
+    var selectedQuinta = ViewBag.SelectedQuinta as int?;
+    var selectedEstado = ViewBag.SelectedEstado as string;
+}
+
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+
+    .filter-group select {
+        max-width: 200px;
+        margin-right: 1rem;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-0">Pedidos Globais</h2>
+            <small class="text-muted">Filtrar e visualizar pedidos por Quinta e Estado</small>
+        </div>
+    </div>
+
+    <form method="get" class="mb-4 d-flex filter-group">
+        <select name="quintaId" class="form-select">
+            <option value="">-- Todas Quintas --</option>
+            @foreach (var q in ViewBag.ListQuintas as List<SelectListItem>)
+            {
+                <option value="@q.Value" @(q.Value == selectedQuinta?.ToString() ? "selected" : "")>
+                    @q.Text
+                </option>
+            }
+        </select>
+
+        <select name="estado" class="form-select">
+            <option value="">-- Todos Estados --</option>
+            @foreach (var e in ViewBag.ListEstados as List<SelectListItem>)
+            {
+                <option value="@e.Value" @(e.Value == selectedEstado ? "selected" : "")>
+                    @e.Text
+                </option>
+            }
+        </select>
+
+        <button type="submit" class="btn btn-dark">
+            <i class="bi bi-filter me-1"></i>Filtrar
+        </button>
+    </form>
+
+
+    @foreach (var group in Model)
+    {
+        <h4 class="mt-4">@group.Key</h4>
+        <div class="row g-4">
+            @foreach (var pedido in group)
+            {
+                <div class="col-12 col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title mb-1">Pedido #@pedido.Id</h5>
+                                    <span class="badge @(pedido.Estado == EstadoPedido.Aprovado ? "bg-success" :
+                                                           pedido.Estado == EstadoPedido.PorAprovar ? "bg-warning" : "bg-danger")">
+                                        @pedido.Estado
+                                    </span>
+                                </div>
+                                <div class="row text-center mt-3">
+                                    <div class="col">
+                                        <div class="h4 mb-0">@pedido.PedidoVinhos.Sum(pv => pv.Quantidade)</div>
+                                        <small class="text-muted">Total Garrafas</small>
+                                    </div>
+                                    <div class="col">
+                                        <div class="h6 mb-0">@pedido.DataPedido.ToLocalTime().ToString("g")</div>
+                                        <small class="text-muted">Data</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 d-flex">
+                                <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-outline-primary flex-fill">
+                                    <i class="bi bi-info-circle me-1"></i> Ver Detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

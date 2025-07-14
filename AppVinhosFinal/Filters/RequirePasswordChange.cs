@@ -26,7 +26,7 @@ namespace AppVinhosFinal.Filters
                 if (int.TryParse(idClaim, out var userId))
                 {
                     // carrega apenas a flag MustChangePassword
-                    var mustChange = await _db.UserAccounts
+                    var mustChange = await _db.Users
                         .Where(u => u.Id == userId)
                         .Select(u => u.MustChangePassword)
                         .FirstOrDefaultAsync();

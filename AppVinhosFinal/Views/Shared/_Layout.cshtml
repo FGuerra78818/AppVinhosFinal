@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
 <body>
-
     <!-- Desktop Header -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3 d-none d-md-flex">
@@ -28,10 +27,15 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Wines" asp-action="Index">Vinhos</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Pedidos" asp-action="Index">Pedidos</a></li>
+                        }
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Staff") || User.IsInRole("Admin")))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="AllWines" asp-action="Index">Vinhos</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="AllPedidos" asp-action="Index">Pedidos</a></li>
                         }
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")

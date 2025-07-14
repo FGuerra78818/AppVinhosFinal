@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace AppVinhosFinal.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class WinesController : Controller
     {
         private readonly AppDbContext _context;
@@ -58,7 +58,7 @@ namespace AppVinhosFinal.Controllers
         public async Task<IActionResult> Create(CreateWineViewModel model)
         {
             var roleClaim = User.FindFirst(ClaimTypes.Role)!.Value;
-            var userQuinta = int.Parse(User.FindFirst("QuintaID")!.Value);
+            var userQuinta = int.Parse(User.FindFirst("QuintaId")!.Value);
 
             // Repor ViewBags em caso de erro
             ViewBag.CurrentRole = roleClaim;
@@ -110,8 +110,9 @@ namespace AppVinhosFinal.Controllers
             // 1) Carrega a quinta e soma a quantidade fria atual
             var quinta = _context.Quintas
                          .Single(q => q.Id == quintaId);
+
             var somaFriaAtual = _context.Vinhos
-                .Where(w => w.IdQuinta == quintaId)
+                .Where(w => w.IdQuinta == quintaId && w.Estado == EstadoVinho.Visible)
                 .Sum(w => w.QuantidadeFria);
 
             // 2) Verifica se ultrapassa o limite

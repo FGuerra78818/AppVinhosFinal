@@ -70,7 +70,7 @@
 
             <p>Uma password temporária será gerada e enviada automaticamente.</p>
 
-            @if ((string)ViewBag.CurrentRole == "Admin")
+            @if ((string)ViewBag.CurrentRole == "Admin" || (string)ViewBag.CurrentRole == "CEO")
             {
                 <div class="mb-3">
                     <label asp-for="Role" class="form-label"></label>
@@ -83,7 +83,7 @@
                 <input asp-for="Role" type="hidden" value="User" />
             }
 
-            @if ((string)ViewBag.CurrentRole == "Admin" || (string)ViewBag.CurrentRole == "Staff")
+            @if ((string)ViewBag.CurrentRole == "Admin" || (string)ViewBag.CurrentRole == "Staff" || (string)ViewBag.CurrentRole == "CEO")
             {
                 <div class="mb-3">
                     <label asp-for="QuintaId" class="form-label">Quinta</label>
@@ -116,7 +116,7 @@
             if (!roleSelect || !quintaSelect) return;
 
             function toggleQuinta() {
-                quintaSelect.disabled = (roleSelect.value === 'Admin');
+                quintaSelect.disabled = (roleSelect.value === 'Admin' || roleSelect.value === 'Staff');
             }
             roleSelect.addEventListener('change', toggleQuinta);
             document.addEventListener('DOMContentLoaded', toggleQuinta);

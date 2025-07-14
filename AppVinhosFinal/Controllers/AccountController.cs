@@ -1,21 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
-using AppVinhosFinal.Entities;
-using AppVinhosFinal.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
+using AppVinhosFinal.Entities;
+using AppVinhosFinal.Models;
 using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
-using System;
-using System.Linq;
-using System.Text;
-using AppVinhosFinal.Services;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace AppVinhosFinal.Controllers
 {
@@ -23,41 +18,38 @@ namespace AppVinhosFinal.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IEmailSender _emailSender;
+        private readonly UserManager<UserAccount> _userManager;
+        private readonly SignInManager<UserAccount> _signInManager;
 
-        public AccountController(AppDbContext context, IEmailSender emailSender)
+        public AccountController(
+            AppDbContext context,
+            IEmailSender emailSender,
+            UserManager<UserAccount> userManager,
+            SignInManager<UserAccount> signInManager)
         {
             _context = context;
             _emailSender = emailSender;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,CEO")]
         public IActionResult Index()
         {
-            return View(_context.UserAccounts.ToList());
+            return View(_context.Users.ToList());
         }
 
         [Authorize]
         public IActionResult Registration()
         {
-            // 1. Recupera o utilizador actual
-            var currentUserName = User.Identity!.Name!;
-            var current = _context.UserAccounts
-                            .Include(u => u.Quinta)
-                            .Single(u => u.UserName == currentUserName);
+            var current = _context.Users
+                .Include(u => u.Quinta)
+                .Single(u => u.UserName == User.Identity!.Name!);
 
-            // 2. Preenche o ViewBag.ListQuintas com todas as quintas
             ViewBag.ListQuintas = _context.Quintas
-                                    .Select(q => new SelectListItem
-                                    {
-                                        Text = q.Nome,
-                                        Value = q.Id.ToString()
-                                    })
-                                    .ToList();
-
-            // 3. ViewBag.ListRoles sempre fixa
+                .Select(q => new SelectListItem(q.Nome, q.Id.ToString()))
+                .ToList();
             ViewBag.ListRoles = new List<string> { "User", "Staff", "Admin" };
-
-            // 4. Passa ao View o QuintaId e Role predefinidos para User/Staff
             ViewBag.CurrentRole = current.Role;
             ViewBag.CurrentQuintaId = current.QuintaId;
             ViewBag.CurrentQuintaName = current.Quinta?.Nome;
@@ -65,25 +57,16 @@ namespace AppVinhosFinal.Controllers
             return View();
         }
 
-        [Authorize]
-        [HttpPost]
+        [Authorize, HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(RegistrationViewModel model)
         {
-            // Recarrega o current para lógica
-            var currentUserName = User.Identity!.Name!;
-            var current = _context.UserAccounts
-                            .Include(u => u.Quinta)
-                            .Single(u => u.UserName == currentUserName);
+            var current = _context.Users
+                .Include(u => u.Quinta)
+                .Single(u => u.UserName == User.Identity!.Name!);
 
-            // Repõe os ViewBags em caso de erro
             ViewBag.ListQuintas = _context.Quintas
-                                    .Select(q => new SelectListItem
-                                    {
-                                        Text = q.Nome,
-                                        Value = q.Id.ToString()
-                                    })
-                                    .ToList();
-
+                .Select(q => new SelectListItem(q.Nome, q.Id.ToString()))
+                .ToList();
             ViewBag.ListRoles = new List<string> { "User", "Staff", "Admin" };
             ViewBag.CurrentRole = current.Role;
             ViewBag.CurrentQuintaId = current.QuintaId;
@@ -92,219 +75,207 @@ namespace AppVinhosFinal.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Gerar password aleatória
-            var password = GenerateSecurePassword(12);
-
+            var tempPassword = GenerateSecurePassword(12);
             var account = new UserAccount
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Password = password
+                Role = (current.Role == "Admin") ? model.Role : "User",
+                QuintaId = (current.Role == "Admin") ? model.QuintaId : current.QuintaId
             };
 
-            // Lógica de atribuição de Role e QuintaId
-            if (current.Role == "Admin")
+            var result = await _userManager.CreateAsync(account, tempPassword);
+            if (!result.Succeeded)
             {
-                account.Role = model.Role;
-                account.QuintaId = model.QuintaId;
-            }
-            else
-            {
-                account.Role = "User";
-                account.QuintaId = current.QuintaId;
-            }
-
-            try
-            {
-                _context.UserAccounts.Add(account);
-                _context.SaveChanges();
-
-                // Enviar email com a password
-                var assunto = "A sua conta foi criada";
-                var corpo = new StringBuilder()
-                    .AppendLine($"Olá {account.UserName},")
-                    .AppendLine()
-                    .AppendLine("A sua conta foi registada com sucesso.")
-                    .AppendLine($"Password temporária: {password}")
-                    .AppendLine()
-                    .AppendLine("Por favor altere-a no primeiro login.")
-                    .ToString();
-
-                await _emailSender.SendEmailAsync(account.Email, assunto, corpo);
-
-                TempData["Message"] = $"Utilizador {model.UserName} criado com sucesso.";
-                return RedirectToAction(nameof(Registration));
-            }
-            catch (DbUpdateException)
-            {
-                ModelState.AddModelError("", "Erro ao registar. Tente novamente.");
+                foreach (var err in result.Errors)
+                    ModelState.AddModelError("", err.Description);
                 return View(model);
             }
+
+            // envia email com a password temporária
+            var asunto = "A sua conta foi criada";
+            var corpo = new StringBuilder()
+                .AppendLine($"Olá {account.UserName},")
+                .AppendLine()
+                .AppendLine("A sua conta foi registada com sucesso.")
+                .AppendLine($"Password temporária: {tempPassword}")
+                .AppendLine()
+                .AppendLine("Por favor altere-a no primeiro login.")
+                .ToString();
+            await _emailSender.SendEmailAsync(account.Email, asunto, corpo);
+
+            TempData["Message"] = $"Utilizador {model.UserName} criado com sucesso.";
+            return RedirectToAction(nameof(Registration));
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
+        public IActionResult Login() => View();
 
-        [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var user = _context.UserAccounts.Where(u => u.UserName == model.UserName && u.Password == model.Password).FirstOrDefault();
-                
-                if (user != null)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.Role, user.Role),
-                        new Claim("QuintaID", user.QuintaId.ToString())
-                    };
+                await _signInManager.PasswordSignInAsync(model.UserName, model.Password, isPersistent: true, lockoutOnFailure: false);
 
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                if (user.MustChangePassword)
+                    return RedirectToAction(nameof(ChangePassword), "Account");
 
-                    if (user.MustChangePassword)
-                        return RedirectToAction(nameof(ChangePassword));
-
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid username or password.");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
-            return View();
+            ModelState.AddModelError("", "Username ou password inválidos.");
+            return View(model);
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect("~/");
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
         public IActionResult SecurePage()
         {
-            ViewBag.Name = HttpContext.User.Identity.Name;
+            ViewBag.Name = User.Identity!.Name;
             return View();
         }
 
         [Authorize]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePassword() => View();
+
+        [Authorize, HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            return View();
-        }
+            if (!ModelState.IsValid) return View(model);
 
+            var user = await _userManager.FindByNameAsync(User.Identity!.Name!);
+            if (user == null) return NotFound();
 
-        [Authorize]
-        [HttpPost]
-        public IActionResult ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
+            var changeResult = await _userManager.ChangePasswordAsync(
+                user, model.CurrentPassword, model.NewPassword);
 
-            var userName = User.Identity!.Name!;
-            var account = _context.UserAccounts
-                           .Single(u => u.UserName == userName);
-
-            if (account.Password != model.CurrentPassword)
+            if (!changeResult.Succeeded)
             {
-                ModelState.AddModelError("CurrentPassword", "Password actual incorreta.");
+                foreach (var err in changeResult.Errors)
+                    ModelState.AddModelError("", err.Description);
                 return View(model);
             }
 
-            account.Password = model.NewPassword;
-            account.MustChangePassword = false;
-            _context.SaveChanges();
+            // update flag
+            user.MustChangePassword = false;
+            await _userManager.UpdateAsync(user);
 
-            return Redirect("~/");
+            await _signInManager.RefreshSignInAsync(user);
+            return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/Profile
         [Authorize]
         public IActionResult Profile()
         {
-            var currentUserName = User.Identity!.Name!;
-            var account = _context.UserAccounts
-                                  .SingleOrDefault(u => u.UserName == currentUserName);
-            if (account == null) return NotFound();
+            var user = _context.Users
+                .Single(u => u.UserName == User.Identity!.Name!);
 
             var vm = new ProfileViewModel
             {
-                Email = account.Email,
-                NewUserName = account.UserName
+                Email = user.Email,
+                NewUserName = user.UserName
             };
             return View(vm);
         }
 
-        // POST: /Account/Profile
         [Authorize, HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
-            var currentUserName = User.Identity!.Name!;
-            var account = _context.UserAccounts
-                                  .SingleOrDefault(u => u.UserName == currentUserName);
-            if (account == null) return NotFound();
+            var user = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
-            // validar uniqueness de UserName
-            if (!string.Equals(model.NewUserName, account.UserName, StringComparison.OrdinalIgnoreCase))
+            if (user == null) return NotFound();
+
+            if (!string.Equals(model.NewUserName, user.UserName, StringComparison.OrdinalIgnoreCase)
+                && await _userManager.FindByNameAsync(model.NewUserName) != null)
             {
-                var exists = _context.UserAccounts
-                                     .Any(u => u.UserName == model.NewUserName);
-                if (exists)
-                {
-                    ModelState.AddModelError(nameof(model.NewUserName),
-                        "Já existe um utilizador com esse nome.");
-                    return View(model);
-                }
+                ModelState.AddModelError(nameof(model.NewUserName),
+                    "Já existe um utilizador com esse nome.");
+                return View(model);
             }
 
-            // atualiza campos
-            account.UserName = model.NewUserName;
-            account.Email = model.Email;
-            _context.SaveChanges();
-
-            // Atualiza o cookie de autenticação com o novo UserName
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
-                new Claim(ClaimTypes.Name, account.UserName),
-                new Claim(ClaimTypes.Role, account.Role),
-                new Claim("QuintaID", account.QuintaId.ToString())
-            };
-
-            var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(ci));
+            user.UserName = model.NewUserName;
+            user.Email = model.Email;
+            await _userManager.UpdateAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
 
             TempData["ProfileMessage"] = "Perfil atualizado com sucesso!";
             return RedirectToAction(nameof(Profile));
         }
 
-        private string GenerateSecurePassword(int length)
+        // Conjuntos de caracteres
+        private const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private const string Lower = "abcdefghijklmnopqrstuvwxyz";
+        private const string Digits = "0123456789";
+        private const string Specials = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+        public static string GenerateSecurePassword(int length = 12)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-            using var rng = new RNGCryptoServiceProvider();
-            var data = new byte[length];
-            rng.GetBytes(data);
-            var result = new char[length];
-            for (int i = 0; i < length; i++)
+            if (length < 8)
+                throw new ArgumentException("O comprimento mínimo da password deve ser 8.", nameof(length));
+
+            // Garante presença de cada tipo
+            var required = new[]
             {
-                var idx = data[i] % chars.Length;
-                result[i] = chars[idx];
+            GetRandomChar(Upper),
+            GetRandomChar(Lower),
+            GetRandomChar(Digits),
+            GetRandomChar(Specials),
+        };
+
+            // Todos os caracteres permitidos
+            var allChars = Upper + Lower + Digits + Specials;
+
+            // Preenche o resto da password
+            var pwdChars = new char[length];
+            // Coloca primeiro os obrigatórios
+            for (int i = 0; i < required.Length; i++)
+                pwdChars[i] = required[i];
+
+            // Preenche o resto com caracteres aleatórios de allChars
+            for (int i = required.Length; i < length; i++)
+                pwdChars[i] = GetRandomChar(allChars);
+
+            // Embaralha para distribuir os obrigatórios
+            return Shuffle(pwdChars);
+        }
+
+        private static char GetRandomChar(string allowed)
+        {
+            var buffer = new byte[4];
+            RandomNumberGenerator.Fill(buffer);
+            // Converte bytes em índice
+            var idx = BitConverter.ToUInt32(buffer, 0) % (uint)allowed.Length;
+            return allowed[(int)idx];
+        }
+
+        private static string Shuffle(char[] array)
+        {
+            int n = array.Length;
+            for (int i = n - 1; i > 0; i--)
+            {
+                // seleciona j aleatório entre 0 e i
+                var buffer = new byte[4];
+                RandomNumberGenerator.Fill(buffer);
+                int j = (int)(BitConverter.ToUInt32(buffer, 0) % (uint)(i + 1));
+
+                // troca array[i] e array[j]
+                var tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
             }
-            return new string(result);
+            return new string(array);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace AppVinhosFinal.Models
         [Required(ErrorMessage = "Email is required.")]
         public string Email { get; set; } = string.Empty;
 
-        public string Role { get; set; } = "User"; // e.g., "Admin", "User" or "Staff"
+        public string Role { get; set; } = "User"; // e.g., "Admin", "User", "Staff" or "CEO"
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

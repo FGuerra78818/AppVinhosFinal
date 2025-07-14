@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AppVinhosFinal.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class PedidosController : Controller
     {
         private readonly AppDbContext _context;
