@@ -36,6 +36,8 @@
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="AllWines" asp-action="Index">Vinhos</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="AllPedidos" asp-action="Index">Pedidos</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="AllUsers" asp-action="Index">Utilizadores</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="LogsCopos" asp-action="Index">Copos</a></li>
                         }
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
@@ -68,19 +70,36 @@
                asp-controller="Home" asp-action="Index">
                 <i class="bi bi-house-fill fs-4"></i><br />Início
             </a>
-            <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
-               asp-controller="Wines" asp-action="Index">
-                <i class="bi bi-box-seam fs-4"></i><br />Stock
-            </a>
-            <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Pedidos"?"active":"")"
-               asp-controller="Pedidos" asp-action="Index">
-                <i class="bi bi-cart fs-4"></i><br />Pedidos
-            </a>
-            <a class="nav-link text-center @(ViewContext.RouteData.Values["action"].ToString()=="Create"
+            @if (User.Identity.IsAuthenticated && User.IsInRole("User")){
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
+                   asp-controller="Wines" asp-action="Index">
+                    <i class="bi bi-box-seam fs-4"></i><br />Stock
+                </a>
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Pedidos"?"active":"")"
+                   asp-controller="Pedidos" asp-action="Index">
+                    <i class="bi bi-cart fs-4"></i><br />Pedidos
+                </a>
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["action"].ToString()=="Create"
                      && ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
-               asp-controller="Wines" asp-action="Create">
-                <i class="bi bi-plus-lg fs-4"></i><br />Novo
-            </a>
+                   asp-controller="Pedidos" asp-action="Create">
+                    <i class="bi bi-plus-lg fs-4"></i><br />Novo
+                </a>
+            }
+            else if (User.Identity.IsAuthenticated && (User.IsInRole("Staff") || User.IsInRole("Admin")))
+            {
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
+                   asp-controller="AllWines" asp-action="Index">
+                    <i class="bi bi-box-seam fs-4"></i><br />Stock
+                </a>
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Pedidos"?"active":"")"
+                   asp-controller="AllPedidos" asp-action="Index">
+                    <i class="bi bi-cart fs-4"></i><br />Pedidos
+                </a>
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Users"?"active":"")"
+                   asp-controller="AllUsers" asp-action="Index">
+                    <i class="bi bi-person-circle fs-4"></i><br />Users
+                </a>
+            }
         </div>
     </nav>
 

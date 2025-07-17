@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Resend;
+using AppVinhosFinal.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,10 +58,9 @@ builder.Services.Configure<ResendClientOptions>(o => o.ApiToken = resendOpts.Key
 builder.Services.AddHttpClient<ResendClient>();
 builder.Services.AddTransient<IResend, ResendClient>();
 builder.Services.AddTransient<IEmailSender, ResendService>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
-
-// --- Pipeline ---
 
 if (!app.Environment.IsDevelopment())
 {
@@ -73,9 +73,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// ** Aqui o Identity regista o handler “Identity.Application” **
 app.UseAuthentication();
 app.UseAuthorization();
+
+// HUB real-time
+app.MapHub<NotificationHub>("/notificationHub");
 
 // Rotas
 app.MapControllerRoute(

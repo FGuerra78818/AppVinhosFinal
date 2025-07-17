@@ -102,9 +102,21 @@
                                 </div>
                             </div>
                             <div class="mt-4 d-flex">
-                                <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-outline-primary flex-fill">
+                                <a asp-action="Details" asp-route-id="@pedido.Id"
+                                   class="btn btn-outline-primary flex-fill me-2">
                                     <i class="bi bi-info-circle me-1"></i> Ver Detalhes
                                 </a>
+
+                                @* Só mostra “Aprovar” se não estiver aprovado e User.IsInRole("Admin") *@
+                                @if (pedido.Estado == EstadoPedido.PorAprovar && User.IsInRole("Admin"))
+                                {
+                                    <form asp-action="Approve" asp-route-id="@pedido.Id" method="post" class="flex-fill approve-form">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-success w-100 btn-approve">
+                                            <i class="bi bi-check-circle me-1"></i> Aprovar
+                                        </button>
+                                    </form>
+                                }
                             </div>
                         </div>
                     </div>
@@ -113,3 +125,27 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.approve-form').forEach(form => {
+          form.addEventListener('submit', async function(evt) {
+            evt.preventDefault();
+            // confirmação
+            if (!confirm('Tem a certeza que pretende aprovar este pedido?')) {
+              return;
+            }
+            // envia via fetch para obter a mensagem do controller
+            const resp = await fetch(form.action, {
+              method: 'POST',
+              body: new FormData(form)
+            });
+            const text = await resp.text();
+            alert(text);
+            // depois refresca para ver badge actualizada
+            location.reload();
+          });
+        });
+    </script>
+}
+

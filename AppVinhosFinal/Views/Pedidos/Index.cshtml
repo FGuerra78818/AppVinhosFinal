@@ -86,9 +86,20 @@
 
                             <div class="mt-4 d-flex">
                                 <a asp-action="Details" asp-route-id="@pedido.Id"
-                                   class="btn btn-outline-primary flex-fill">
+                                   class="btn btn-outline-primary flex-fill me-2">
                                     <i class="bi bi-info-circle me-1"></i>Detalhes
                                 </a>
+
+                                @* Só mostra “Cancelar” se estiver "PorAprovar" *@
+                                @if (pedido.Estado == EstadoPedido.PorAprovar)
+                                {
+                                    <form asp-action="Cancel" asp-route-id="@pedido.Id" method="post" class="cancel-form flex-fill">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger w-100 btn-cancel">
+                                            <i class="bi bi-x-circle me-1"></i>Cancelar
+                                        </button>
+                                    </form>
+                                }
                             </div>
                         </div>
                     </div>
@@ -97,3 +108,33 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.cancel-form').forEach(form => {
+          form.addEventListener('submit', async function(evt) {
+            evt.preventDefault();
+
+            // monta o fetch com o formdata (inclui o antiforgery token)
+            const url = form.action;
+            const formData = new FormData(form);
+
+            const resp = await fetch(url, {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (resp.ok) {
+              // cancelamento bem-sucedido: recarrega para ver o estado atualizado
+              location.reload();
+            } else {
+              // lê a mensagem de erro (400, 403 ou outro) e mostra alert
+              const text = await resp.text();
+              alert(text || 'Não foi possível cancelar o pedido.');
+              // depois refresha
+              location.reload();
+            }
+          });
+        });
+    </script>
+}

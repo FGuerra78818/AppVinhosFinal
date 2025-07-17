@@ -39,44 +39,27 @@ namespace AppVinhosFinal.Controllers
 
         public IActionResult Create()
         {
-            // role e quintas
-            var roleClaim = User.FindFirst(ClaimTypes.Role)!.Value;
-            ViewBag.CurrentRole = roleClaim;
-            ViewBag.CurrentQuintaId = int.Parse(User.FindFirst("QuintaId")!.Value);
-
-            if (roleClaim == "Admin" || roleClaim == "Staff")
+            // obtém a Quinta do claim e pré-popula o ViewModel
+            var userQuinta = int.Parse(User.FindFirst("QuintaId")!.Value);
+            var vm = new CreateWineViewModel
             {
-                ViewBag.ListQuintas = _context.Quintas
-                    .Select(q => new SelectListItem(q.Nome, q.Id.ToString()))
-                    .ToList();
-            }
-
-            return View(new CreateWineViewModel());
+                QuintaId = userQuinta
+            };
+            ViewBag.CurrentQuintaId = userQuinta;
+            return View(vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateWineViewModel model)
         {
-            var roleClaim = User.FindFirst(ClaimTypes.Role)!.Value;
             var userQuinta = int.Parse(User.FindFirst("QuintaId")!.Value);
-
-            // Repor ViewBags em caso de erro
-            ViewBag.CurrentRole = roleClaim;
             ViewBag.CurrentQuintaId = userQuinta;
-            if (roleClaim == "Admin" || roleClaim == "Staff")
-            {
-                ViewBag.ListQuintas = _context.Quintas
-                    .Select(q => new SelectListItem(q.Nome, q.Id.ToString()))
-                    .ToList();
-            }
 
             if (!ModelState.IsValid)
                 return View(model);
 
             // Decide a que Quinta este vinho vai pertencer
-            var quintaId = (roleClaim == "Admin" || roleClaim == "Staff")
-                ? model.QuintaId!.Value
-                : userQuinta;
+            var quintaId = userQuinta;
 
             // 1) Verifica existência
             var existing = await _context.Vinhos
@@ -89,6 +72,15 @@ namespace AppVinhosFinal.Controllers
                 // existe mas está oculto?
                 if (existing.Estado == EstadoVinho.Hidden)
                 {
+                    if (model.QuantidadeFria > model.Quantidade)
+                    {
+                        ModelState.AddModelError(
+                            nameof(model.QuantidadeFria),
+                            "A quantidade fria não pode exceder a quantidade total."
+                        );
+                        return View(model);
+                    }
+
                     // Atualiza o estado
                     existing.Estado = EstadoVinho.Visible;
                     // Atualiza as quantidades
@@ -131,6 +123,7 @@ namespace AppVinhosFinal.Controllers
                 Nome = model.Nome,
                 Quantidade = model.Quantidade,
                 QuantidadeFria = model.QuantidadeFria,
+                CapacidadeFria = model.QuantidadeFria,
                 IdQuinta = quintaId,
                 Estado = EstadoVinho.Visible
             };
@@ -187,32 +180,51 @@ namespace AppVinhosFinal.Controllers
         }
 
         // POST: Wines/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Quantidade,QuantidadeFria")] Vinhos vinho)
         {
             if (id != vinho.Id)
                 return NotFound();
 
-            // validar que Quantidade total >= QuantidadeFria
+            // 1) Quantidade total ≥ QuantidadeFria
             if (vinho.Quantidade < vinho.QuantidadeFria)
             {
-                ModelState.AddModelError("QuantidadeFria", "A quantidade fria não pode ser maior que o total.");
+                ModelState.AddModelError(nameof(vinho.QuantidadeFria),
+                    "A quantidade fria não pode ser maior que a quantidade total.");
             }
 
-            if (!ModelState.IsValid)
-                return View(vinho);
-
-            // obter a entidade existente para manter relacionamentos intactos
-            var entity = await _context.Vinhos.FindAsync(id);
+            // 2) Limite global de fria na Quinta
+            //    Carrega a entidade atual para obter IdQuinta e manter outros valores
+            var entity = await _context.Vinhos
+                .Include(w => w.Quinta)
+                .FirstOrDefaultAsync(w => w.Id == id);
             if (entity == null)
                 return NotFound();
 
-            // atualizar apenas os campos editáveis
+            // Soma das QuantidadeFria de todos os vinhos visíveis, excepto este
+            var somaOutrosFria = await _context.Vinhos
+                .Where(w => w.IdQuinta == entity.IdQuinta
+                            && w.Estado == EstadoVinho.Visible
+                            && w.Id != id)
+                .SumAsync(w => w.QuantidadeFria);
+
+            // Espaço restante no frio da Quinta
+            var maxFrio = entity.Quinta!.NumeroMaxVinhoFrio;
+            var restanteFrio = maxFrio - somaOutrosFria;
+            if (vinho.QuantidadeFria > restanteFrio)
+            {
+                ModelState.AddModelError(nameof(vinho.QuantidadeFria),
+                    $"A quantidade fria não pode exceder {restanteFrio}, que é o espaço restante neste frigorífico.");
+            }
+
+            if (!ModelState.IsValid)
+                return View(entity);
+
+            // 3) Atualiza campos permitidos
             entity.Nome = vinho.Nome;
             entity.Quantidade = vinho.Quantidade;
             entity.QuantidadeFria = vinho.QuantidadeFria;
-            // QuantidadeQuente é calculada internamente no modelo
+            // CapacidadeFria continua fixa em criação/edit anterior
 
             try
             {
@@ -220,11 +232,11 @@ namespace AppVinhosFinal.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VinhoExists(vinho.Id))
+                if (!_context.Vinhos.Any(e => e.Id == id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,0 +1,11 @@
+﻿@model AppVinhosFinal.Models.LogsCopos
+
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "Novo Registo de Copos";
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

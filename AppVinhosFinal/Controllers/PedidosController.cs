@@ -160,5 +160,67 @@ namespace AppVinhosFinal.Controllers
                 })
                 .ToList();
         }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var pedido = await _context.Pedidos
+                .Include(p => p.PedidoVinhos)
+                    .ThenInclude(pv => pv.Vinho)
+                        .ThenInclude(v => v.Quinta)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pedido == null)
+                return NotFound("Pedido não encontrado.");
+
+            var userQuintaId = int.Parse(User.FindFirst("QuintaId")!.Value);
+            if (!pedido.PedidoVinhos.Any(pv => pv.Vinho.IdQuinta == userQuintaId))
+                return Forbid("Não tens permissão para cancelar este pedido.");
+
+            if (pedido.Estado != EstadoPedido.PorAprovar)
+                return BadRequest("Pedido já aprovado. Não é permitido cancelar pedidos já cancelados.");
+
+            // Para cada item, repõe o total e tenta inserir o máximo no frio:
+            foreach (var item in pedido.PedidoVinhos)
+            {
+                var wine = item.Vinho!;
+                var quinta = wine.Quinta!;
+
+                // 1) Repor o total
+                wine.Quantidade += item.Quantidade;
+
+                // 2) Calcular espaço livre no frigorífico da Quinta
+                var currentCold = await _context.Vinhos
+                    .Where(w => w.IdQuinta == quinta.Id && w.Estado == EstadoVinho.Visible)
+                    .SumAsync(w => w.QuantidadeFria);
+
+                var fridgeSpace = Math.Max(0, quinta.NumeroMaxVinhoFrio - currentCold);
+
+                // 3) Quanto ainda cabe neste vinho até à sua capacidade inicial
+                var wineCapacityLeft = Math.Max(0, wine.CapacidadeFria - wine.QuantidadeFria);
+
+                // 4) Quantas garrafas deste item podemos colocar no frio
+                var toCold = Math.Min(item.Quantidade, Math.Min(wineCapacityLeft, fridgeSpace));
+
+                if (toCold > 0)
+                {
+                    wine.QuantidadeFria += toCold;
+                }
+
+                // 5) Se esgotámos o espaço global do frigorífico, atualiza a capacidade deste vinho
+                //    para o que efectivamente ficou no frio
+                if (toCold < wineCapacityLeft && fridgeSpace == toCold)
+                {
+                    wine.CapacidadeFria = wine.QuantidadeFria;
+                }
+            }
+
+            // 6) Marca como cancelado e grava
+            pedido.Estado = EstadoPedido.Cancelado;
+            await _context.SaveChangesAsync();
+
+            return Ok("Pedido cancelado e stock reposto com sucesso.");
+        }
     }
 }

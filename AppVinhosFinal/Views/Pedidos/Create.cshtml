@@ -38,6 +38,26 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         margin: 2rem auto;
     }
+
+    .temp-cell {
+        vertical-align: middle;
+        padding: 0;
+    }
+
+        .temp-cell .btn-group-toggle {
+            display: flex;
+            height: 100%;
+        }
+
+            .temp-cell .btn-group-toggle .btn {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                padding: 0; /* remove padding extra */
+                border-radius: 0; /* alinha com o resto da tabela */
+            }
 </style>
 
 <div class="bg-image"></div>
@@ -92,26 +112,26 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-outline-info @(sel=="Frio"?"active":"")">
+                                        <label class="btn btn-info @(sel=="Frio"?"active":"")">
                                             <input type="radio"
                                                    name="PedidoVinhos[@i].Tipo"
                                                    value="Frio"
                                                    autocomplete="off"
                                             @(sel == "Frio" ? "checked" : "") />
-                                            <i class="bi bi-snow"></i>
+                                            <i></i>
                                         </label>
-                                        <label class="btn btn-outline-danger @(sel=="Quente"?"active":"")">
+                                        <label class="btn btn-danger @(sel=="Quente"?"active":"")">
                                             <input type="radio"
                                                    name="PedidoVinhos[@i].Tipo"
                                                    value="Quente"
                                                    autocomplete="off"
                                             @(sel == "Quente" ? "checked" : "") />
-                                            <i class="bi bi-fire"></i>
+                                            <i></i>
                                         </label>
                                     </div>
                                 </td>
                                 <td>
-                                    <button type="button"
+                                    <button type="button align-middle"
                                             class="btn btn-sm btn-danger"
                                             onclick="removerLinha(this)">
                                         ×
@@ -121,7 +141,7 @@
                         }
                     </tbody>
                 </table>
-                <button type="button" class="btn btn-secondary" onclick="adicionarLinha()">
+                <button type="button" id="btn-add-vinho" class="btn btn-secondary" onclick="adicionarLinha()">
                     Adicionar Vinho
                 </button>
             </div>
@@ -137,37 +157,69 @@
         document.addEventListener('DOMContentLoaded', () => {
             const vinhosData = @Html.Raw(vinhosJson);
 
+            function getSelectedIds() {
+                // Recolhe todos os Ids seleccionados nas linhas
+                return Array.from(document.querySelectorAll('select[name^="PedidoVinhos"]'))
+                    .map(sel => sel.value)
+                    .filter(v => v);
+            }
+
             function populaLinha(tr) {
                 const select = tr.querySelector('select');
                 const inputQ = tr.querySelector('input[type=number]');
+                const selectedIds = getSelectedIds();
+                const mySelected = select.getAttribute('data-selected');
+
+                // Limpa opções e adiciona só vinhos não escolhidos nas outras linhas (ou o seu próprio valor)
                 select.innerHTML = '<option value="">-- Seleciona --</option>';
-                vinhosData.forEach(v => {
-                    const o = document.createElement('option');
-                    o.value = v.value;
-                    o.textContent = v.text;
-                    select.appendChild(o);
-                });
-                const selVal = select.getAttribute('data-selected');
-                if (selVal) select.value = selVal;
+                vinhosData
+                    .filter(v => v.value === mySelected || !selectedIds.includes(v.value))
+                    .forEach(v => {
+                        const o = document.createElement('option');
+                        o.value = v.value;
+                        o.textContent = v.text;
+                        select.appendChild(o);
+                    });
+
+                // Repõe seleção antiga, actualiza stock e max
+                select.value = mySelected;
                 const wine = vinhosData.find(v => v.value === select.value);
                 const stock = wine ? wine.stock : 0;
                 select.dataset.stock = stock;
                 inputQ.max = stock;
                 if (parseInt(inputQ.value) > stock) inputQ.value = stock;
-                select.addEventListener('change', () => {
-                    const w = vinhosData.find(v => v.value === select.value);
-                    const st = w ? w.stock : 0;
-                    select.dataset.stock = st;
-                    inputQ.max = st;
-                    if (parseInt(inputQ.value) > st) inputQ.value = st;
-                });
+
+                // Quando mudar, refresca todas as linhas
+                select.onchange = () => {
+                    select.setAttribute('data-selected', select.value);
+                    refreshAllLines();
+                };
             }
 
-            document.querySelectorAll('#tabela-itens tbody tr').forEach(tr => {
-                const select = tr.querySelector('select');
-                select.setAttribute('data-selected', select.getAttribute('data-selected') || '');
-                populaLinha(tr);
-            });
+            function refreshAllLines() {
+                const selectedIds = getSelectedIds();
+
+                // 1) refresca cada linha
+                document.querySelectorAll('#tabela-itens tbody tr').forEach(tr => {
+                    populaLinha(tr);
+                });
+
+                // 2) vê se ainda há vinhos por escolher
+                const remaining = vinhosData
+                    .filter(v => !selectedIds.includes(v.value))
+                    .length;
+
+                // 3) show/hide do botão
+                const btn = document.getElementById('btn-add-vinho');
+                if (remaining === 0) {
+                    btn.style.display = 'none';
+                } else {
+                    btn.style.display = '';
+                }
+            }
+
+            // Inicialização
+            refreshAllLines();
 
             window.adicionarLinha = () => {
                 const tb = document.querySelector('#tabela-itens tbody');
@@ -196,12 +248,15 @@
                         <button type="button" class="btn btn-sm btn-danger" onclick="removerLinha(this)">×</button>
                     </td>`;
                 tb.appendChild(tr);
-                populaLinha(tr);
+                refreshAllLines();
             };
 
             window.removerLinha = btn => {
                 const tb = document.querySelector('#tabela-itens tbody');
-                if (tb.children.length > 1) btn.closest('tr').remove();
+                if (tb.children.length > 1) {
+                    btn.closest('tr').remove();
+                    refreshAllLines();
+                }
             };
         });
     </script>
@@ -209,3 +264,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+

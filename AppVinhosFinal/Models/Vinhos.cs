@@ -15,7 +15,10 @@ namespace AppVinhosFinal.Models
         public int Quantidade { get; set; }
 
         [Required]
-        public int QuantidadeFria { get; set; } = 0;
+        public int QuantidadeFria { get; set; }
+
+        [Required]
+        public int CapacidadeFria { get; set; }
 
         [Required]
         public int QuantidadeQuente

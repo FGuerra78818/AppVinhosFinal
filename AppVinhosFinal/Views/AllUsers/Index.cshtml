@@ -1,0 +1,114 @@
+﻿@model IEnumerable<System.Linq.IGrouping<string, AppVinhosFinal.Entities.UserAccount>>
+@removeTagHelper "Microsoft.AspNetCore.Mvc.TagHelpers.OptionTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers"
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"]       = "Utilizadores";
+    var selectedNome        = ViewBag.SelectedNome as string;
+    var selectedQuinta      = ViewBag.SelectedQuinta as int?;
+    var selectedRole        = ViewBag.SelectedRole as string;
+}
+
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+    .filter-group input,
+    .filter-group select {
+        max-width: 200px;
+        margin-right: 1rem;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-0">Utilizadores</h2>
+            <small class="text-muted">Filtrar por Nome, Quinta e Role</small>
+        </div>
+    </div>
+
+    <form method="get" class="mb-4 d-flex filter-group">
+        <input 
+            name="nome"
+            value="@selectedNome"
+            class="form-control"
+            placeholder="Nome" />
+
+        <select id="quintaFilter" name="quintaId" class="form-select">
+            <option value="">-- Todas Quintas --</option>
+            @foreach (var q in ViewBag.ListQuintas as List<SelectListItem>)
+            {
+                <option 
+                    value="@q.Value"
+                    @(q.Value == selectedQuinta?.ToString() ? "selected" : "")>
+                    @q.Text
+                </option>
+            }
+        </select>
+
+        <select id="roleFilter" name="role" class="form-select">
+            <option value="">-- Todas Roles --</option>
+            @foreach (var r in ViewBag.ListRoles as List<SelectListItem>)
+            {
+                <option 
+                    value="@r.Value"
+                    @(r.Value == selectedRole ? "selected" : "")>
+                    @r.Text
+                </option>
+            }
+        </select>
+
+        <button type="submit" class="btn btn-dark">
+            <i class="bi bi-filter me-1"></i>Filtrar
+        </button>
+    </form>
+
+    @foreach (var group in Model)
+    {
+        <h4 class="mt-4">@group.Key</h4>
+        <div class="row g-4">
+            @foreach (var user in group)
+            {
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title mb-1">@user.UserName</h5>
+                                    <span class="badge @(user.Role == "Admin" ? "bg-primary" : user.Role == "Staff" ? "bg-success" : user.Role == "CEO" ? "bg-warning" : "bg-secondary")">
+                                        @user.Role
+                                    </span>
+                                </div>
+                                <p class="mt-2 mb-0">
+                                    <strong>Email:</strong> @user.Email
+                                </p>
+                                @if (user.Role == "User"){
+                                    <p class="mb-0">
+                                        <strong>Quinta:</strong> @user.Quinta?.Nome
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

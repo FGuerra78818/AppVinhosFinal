@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using AppVinhosFinal.Entities;
 using AppVinhosFinal.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AppVinhosFinal.Controllers
 {
@@ -82,6 +83,27 @@ namespace AppVinhosFinal.Controllers
                 .FirstOrDefault(p => p.Id == id);
             if (pedido == null) return NotFound();
             return View(pedido);
+        }
+
+        // POST: /AllPedidos/Approve/5
+        [Authorize(Roles = "Admin")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var pedido = await _context.Pedidos.FindAsync(id);
+            if (pedido == null)
+                return NotFound("Pedido não encontrado.");
+
+            if (pedido.Estado != EstadoPedido.PorAprovar)
+                return BadRequest("Pedido cancelado pelo utilizador. Não é permitido Aprovar pedidos cancelados.");
+
+            // altera estado e regista data de aprovação (UTC)
+            pedido.Estado = EstadoPedido.Aprovado;
+            pedido.DataAprovacao = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Pedido aprovado com sucesso.");
         }
     }
 }
