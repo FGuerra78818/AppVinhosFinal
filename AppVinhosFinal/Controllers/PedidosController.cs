@@ -5,7 +5,9 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using AppVinhosFinal.Entities;
 using AppVinhosFinal.Models;
+using AppVinhosFinal.Hubs;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AppVinhosFinal.Controllers
 {
@@ -13,9 +15,12 @@ namespace AppVinhosFinal.Controllers
     public class PedidosController : Controller
     {
         private readonly AppDbContext _context;
-        public PedidosController(AppDbContext context)
+        private readonly IHubContext<NotificationHub> _hubContext;
+
+        public PedidosController(AppDbContext context, IHubContext<NotificationHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         // GET: /Pedidos
@@ -74,10 +79,13 @@ namespace AppVinhosFinal.Controllers
 
         // POST: /Pedidos/Create
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Create(Pedidos model)
+        public async Task<IActionResult> Create(Pedidos model)
         {
             if (!int.TryParse(User.FindFirst("QuintaId")?.Value, out var quintaId))
                 return Forbid();
+
+            var quinta = await _context.Quintas.FindAsync(quintaId);
+            var nomeDaQuinta = quinta?.Nome;
 
             // filtra apenas itens com quantidade > 0
             var itens = model.PedidoVinhos?.Where(pv => pv.Quantidade > 0).ToList()
@@ -144,6 +152,16 @@ namespace AppVinhosFinal.Controllers
             }
 
             _context.SaveChanges();
+
+            // Notifica o hub de que há um novo pedido
+            await _hubContext
+                .Clients
+                .Group("Admins")
+                .SendAsync("ReceiveNotification", new
+                {
+                    Mensagem = $"{nomeDaQuinta} criou o Pedido #{model.Id}."
+            });
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -177,6 +195,9 @@ namespace AppVinhosFinal.Controllers
             var userQuintaId = int.Parse(User.FindFirst("QuintaId")!.Value);
             if (!pedido.PedidoVinhos.Any(pv => pv.Vinho.IdQuinta == userQuintaId))
                 return Forbid("Não tens permissão para cancelar este pedido.");
+
+            var userquinta = await _context.Quintas.FindAsync(userQuintaId);
+            var nomeDaQuinta = userquinta?.Nome ?? "desconhecida";
 
             if (pedido.Estado != EstadoPedido.PorAprovar)
                 return BadRequest("Pedido já aprovado. Não é permitido cancelar pedidos já cancelados.");
@@ -219,6 +240,14 @@ namespace AppVinhosFinal.Controllers
             // 6) Marca como cancelado e grava
             pedido.Estado = EstadoPedido.Cancelado;
             await _context.SaveChangesAsync();
+
+            await _hubContext
+                .Clients
+                .Group("Admins")
+                .SendAsync("ReceiveNotification", new
+                {
+                    Mensagem = $"{nomeDaQuinta} cancelou o pedido #{pedido.Id}."
+            });
 
             return Ok("Pedido cancelado e stock reposto com sucesso.");
         }

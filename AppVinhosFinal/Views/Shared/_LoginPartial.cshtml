@@ -10,26 +10,24 @@
     <div class="d-flex align-items-center">
         <!-- Dropdown de Notificações -->
         <div class="dropdown me-3">
-            <a class="nav-link position-relative p-0" href="#" id="notifDropdownMobile"
-               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link position-relative p-0" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      style="font-size:.6rem;">3</span>
+                <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size:.6rem;">0</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdownMobile">
-                <li><h6 class="dropdown-header">Notificações</h6></li>
-                <li><a class="dropdown-item text-muted" href="#">Sem novas notificações</a></li>
+            <ul id="notifItems" class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown" style="width:300px; max-height:400px; overflow-y:auto;">
+                <li class="dropdown-header">Notificações</li>
+                <li><hr class="dropdown-divider" /></li>
+                <li class="placeholder"><a class="dropdown-item text-muted" href="#">Sem novas notificações</a></li>
             </ul>
         </div>
 
         <!-- Dropdown de Perfil -->
         <div class="dropdown">
-            <a class="nav-link p-0 d-flex align-items-center" href="#" id="userDropdownMobile"
-               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link p-0 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle fs-5"></i>
                 <span class="ms-1 d-none d-lg-inline">@userName</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMobile">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li><h6 class="dropdown-header">Minha Conta</h6></li>
                 <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Perfil</a></li>
                 <li><hr class="dropdown-divider" /></li>
@@ -49,6 +47,58 @@
             </ul>
         </div>
     </div>
+
+    <!-- Script SignalR para notificações -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script>
+        (function() {
+            // Guarda a conexão global para evitar múltiplas instâncias
+            if (!window.notificationConnection) {
+                window.notificationConnection = new signalR.HubConnectionBuilder()
+                    .withUrl('/notificationHub', { withCredentials: true })
+                    .build();
+
+                const conn = window.notificationConnection;
+
+                const redirectUrl = '@(User.IsInRole("Admin") ? Url.Action("Index", "AllPedidos") : Url.Action("Index", "Pedidos"))';
+
+                conn.on('ReceiveNotification', data => {
+                    const msg = data.Mensagem || data.mensagem || data.message || 'Nova notificação';
+
+                    // Atualiza badge
+                    const badge = document.getElementById('notifBadge');
+                    const current = parseInt(badge.textContent || '0', 10) || 0;
+                    badge.textContent = current + 1;
+                    badge.classList.remove('d-none');
+
+                    // Insere na lista, evitando duplicados
+                    const container = document.getElementById('notifItems');
+                    const placeholder = container.querySelector('li.placeholder');
+                    if (placeholder) placeholder.remove();
+
+                    const exists = [...container.querySelectorAll('a.dropdown-item')]
+                        .some(el => el.textContent.trim() === msg.trim());
+                    if (!exists) {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.className = 'dropdown-item';
+                        a.href = redirectUrl;
+                        a.textContent = msg;
+                        li.appendChild(a);
+                        // Insere após o cabeçalho e divider
+                        const insertIndex = 2; // após <li>header e <li><hr>
+                        if (container.children.length > insertIndex) {
+                            container.insertBefore(li, container.children[insertIndex]);
+                        } else {
+                            container.appendChild(li);
+                        }
+                    }
+                });
+
+                conn.start().catch(err => console.error('SignalR error:', err));
+            }
+        })();
+    </script>
 }
 else
 {

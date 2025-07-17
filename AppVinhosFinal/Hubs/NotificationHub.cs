@@ -7,9 +7,16 @@ namespace AppVinhosFinal.Hubs
         public override async Task OnConnectedAsync()
         {
             var user = Context.User;
-            if (user != null && user.IsInRole("Admin"))
-            {
+            var httpContext = Context.GetHttpContext();
+            // Agrupa Admins
+            if (user.IsInRole("Admin"))
                 await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
+
+            // Agrupa Users pela sua QuintaId
+            var claim = user.FindFirst("QuintaId")?.Value;
+            if (int.TryParse(claim, out var qid))
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"Quinta-{qid}");
             }
 
             await base.OnConnectedAsync();
