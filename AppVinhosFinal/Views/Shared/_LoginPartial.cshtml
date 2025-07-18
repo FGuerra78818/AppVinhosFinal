@@ -10,20 +10,29 @@
     <div class="d-flex align-items-center">
         <!-- Dropdown de Notificações -->
         <div class="dropdown me-3">
-            <a class="nav-link position-relative p-0" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link position-relative p-0" href="#" id="notifDropdown"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-bell fs-5"></i>
-                <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size:.6rem;">0</span>
+                <span id="notifBadge"
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                      style="font-size:.6rem;">0</span>
             </a>
-            <ul id="notifItems" class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown" style="width:300px; max-height:400px; overflow-y:auto;">
+            <ul id="notifItems"
+                class="dropdown-menu dropdown-menu-end mt-2"
+                aria-labelledby="notifDropdown"
+                style="width:300px; max-height:400px; overflow-y:auto; z-index:1050;">
                 <li class="dropdown-header">Notificações</li>
                 <li><hr class="dropdown-divider" /></li>
-                <li class="placeholder"><a class="dropdown-item text-muted" href="#">Sem novas notificações</a></li>
+                <li class="placeholder">
+                    <a class="dropdown-item text-muted" href="#">Sem novas notificações</a>
+                </li>
             </ul>
         </div>
 
         <!-- Dropdown de Perfil -->
         <div class="dropdown">
-            <a class="nav-link p-0 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link p-0 d-flex align-items-center" href="#" id="userDropdown"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle fs-5"></i>
                 <span class="ms-1 d-none d-lg-inline">@userName</span>
             </a>
@@ -48,62 +57,146 @@
         </div>
     </div>
 
-    <!-- Script SignalR para notificações -->
+    <!-- Container para os toasts -->
+    <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index:1200;"></div>
+
+    <!-- Script SignalR e persistência de notificações -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
     <script>
         (function() {
-            // Guarda a conexão global para evitar múltiplas instâncias
-            if (!window.notificationConnection) {
-                window.notificationConnection = new signalR.HubConnectionBuilder()
-                    .withUrl('/notificationHub', { withCredentials: true })
-                    .build();
+          if (window.notificationInit) return;
+          window.notificationInit = true;
 
-                const conn = window.notificationConnection;
+          const storageKey = 'appVinhosNotifs';
+          const isAdmin = @(User.IsInRole("Admin").ToString().ToLower());
+          const redirectUrl = isAdmin
+            ? '@Url.Action("Index", "AllPedidos")'
+            : '@Url.Action("Index", "Pedidos")';
 
-                const redirectUrl = '@(User.IsInRole("Admin") ? Url.Action("Index", "AllPedidos") : Url.Action("Index", "Pedidos"))';
-
-                conn.on('ReceiveNotification', data => {
-                    const msg = data.Mensagem || data.mensagem || data.message || 'Nova notificação';
-
-                    // Atualiza badge
-                    const badge = document.getElementById('notifBadge');
-                    const current = parseInt(badge.textContent || '0', 10) || 0;
-                    badge.textContent = current + 1;
-                    badge.classList.remove('d-none');
-
-                    // Insere na lista, evitando duplicados
-                    const container = document.getElementById('notifItems');
-                    const placeholder = container.querySelector('li.placeholder');
-                    if (placeholder) placeholder.remove();
-
-                    const exists = [...container.querySelectorAll('a.dropdown-item')]
-                        .some(el => el.textContent.trim() === msg.trim());
-                    if (!exists) {
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.className = 'dropdown-item';
-                        a.href = redirectUrl;
-                        a.textContent = msg;
-                        li.appendChild(a);
-                        // Insere após o cabeçalho e divider
-                        const insertIndex = 2; // após <li>header e <li><hr>
-                        if (container.children.length > insertIndex) {
-                            container.insertBefore(li, container.children[insertIndex]);
-                        } else {
-                            container.appendChild(li);
-                        }
-                    }
-                });
-
-                conn.start().catch(err => console.error('SignalR error:', err));
+          // Atualiza badge (visível se count>0)
+          function updateBadge(count) {
+            const badge = document.getElementById('notifBadge');
+            if (count > 0) {
+              badge.textContent = count;
+              badge.classList.remove('d-none');
+            } else {
+              badge.classList.add('d-none');
             }
+          }
+
+          // Renderiza dropdown com no máximo 5 notificações + botão "Ver todas"
+          function refreshDropdown(arr) {
+            const container = document.getElementById('notifItems');
+            // limpa todas as entradas dinâmicas e placeholder
+            container.querySelectorAll('li.dynamic, li.placeholder').forEach(el => el.remove());
+
+            if (arr.length === 0) {
+              const li = document.createElement('li');
+              li.className = 'placeholder';
+              const a = document.createElement('a');
+              a.className = 'dropdown-item text-muted';
+              a.href = '#';
+              a.textContent = 'Sem novas notificações';
+              li.appendChild(a);
+              container.appendChild(li);
+            } else {
+              // mostra só os primeiros 5
+              arr.slice(0, 5).forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'dynamic';
+                const a = document.createElement('a');
+                a.className = 'dropdown-item';
+                a.href = redirectUrl;
+                a.dataset.id = item.id;
+                a.textContent = item.msg;
+                a.addEventListener('click', e => removeNotif(item.id));
+                li.appendChild(a);
+                container.appendChild(li);
+              });
+              // se houver mais de 5, adiciona botão Ver todas
+              if (arr.length > 5) {
+                const li = document.createElement('li');
+                li.className = 'dynamic';
+                const a = document.createElement('a');
+                a.className = 'dropdown-item text-center';
+                a.href = '@Url.Action("Index", "Notifications")';
+                a.textContent = 'Ver todas as notificações';
+                li.appendChild(a);
+                container.appendChild(li);
+              }
+            }
+            updateBadge(arr.length);
+          }
+
+          // Carrega do localStorage
+          function loadNotifs() {
+            const arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            refreshDropdown(arr);
+          }
+
+          // Guarda no localStorage
+          function saveNotifs(arr) {
+            localStorage.setItem(storageKey, JSON.stringify(arr));
+          }
+
+          // Adiciona nova notificação
+          function addNotif(msg) {
+            const id = Date.now().toString();
+            let arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            arr.unshift({ id, msg });
+            saveNotifs(arr);
+            refreshDropdown(arr);
+            showToast(msg);
+          }
+
+          // Remove só quando clicado
+          function removeNotif(id) {
+            let arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            arr = arr.filter(x => x.id !== id);
+            saveNotifs(arr);
+            refreshDropdown(arr);
+          }
+
+          // Mostrar toast Bootstrap
+          function showToast(msg) {
+            const container = document.getElementById('toastContainer');
+            const toastEl = document.createElement('div');
+            toastEl.className = 'toast align-items-center text-white bg-primary border-0';
+            toastEl.setAttribute('role','alert');
+            toastEl.setAttribute('aria-live','assertive');
+            toastEl.setAttribute('aria-atomic','true');
+            toastEl.innerHTML = `
+              <div class="d-flex">
+                <div class="toast-body">${msg}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast" aria-label="Fechar"></button>
+              </div>`;
+            container.appendChild(toastEl);
+            const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+            toast.show();
+          }
+
+          // signalR
+          const connection = new signalR.HubConnectionBuilder()
+            .withUrl('/notificationHub', { withCredentials: true })
+            .build();
+
+          connection.on('ReceiveNotification', data => {
+            const msg = data.Mensagem || data.mensagem || data.message || 'Nova notificação';
+            addNotif(msg);
+          });
+          connection.start().catch(err => console.error('SignalR error:', err));
+
+          // inicial
+          loadNotifs();
         })();
     </script>
 }
 else
 {
     <div class="d-flex align-items-center">
-        <a class="nav-link d-flex align-items-center me-3" asp-controller="Account" asp-action="Login">
+        <a class="nav-link d-flex align-items-center me-3"
+           asp-controller="Account" asp-action="Login">
             <i class="bi bi-box-arrow-in-right fs-5 me-1"></i>Login
         </a>
     </div>
