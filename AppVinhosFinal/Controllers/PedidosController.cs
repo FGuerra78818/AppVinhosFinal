@@ -8,6 +8,7 @@ using AppVinhosFinal.Models;
 using AppVinhosFinal.Hubs;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AppVinhosFinal.Controllers
 {
@@ -151,7 +152,7 @@ namespace AppVinhosFinal.Controllers
                 _context.Entry(vinho).State = EntityState.Modified;
             }
 
-            _context.SaveChanges();
+            var text = $"{nomeDaQuinta} criou o Pedido #{model.Id}.";
 
             // Notifica o hub de que há um novo pedido
             await _hubContext
@@ -159,8 +160,20 @@ namespace AppVinhosFinal.Controllers
                 .Group("Admins")
                 .SendAsync("ReceiveNotification", new
                 {
-                    Mensagem = $"{nomeDaQuinta} criou o Pedido #{model.Id}."
+                    Mensagem = text
             });
+
+            _context.Notifications.Add(new Notification
+            {
+                QuintaId = quintaId,
+                Message = text,
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false,
+                Direction = NotificationDirection.UserToAdmin
+            });
+
+            // 5) Grava a mudança de estado
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -237,17 +250,30 @@ namespace AppVinhosFinal.Controllers
                 }
             }
 
-            // 6) Marca como cancelado e grava
+            // 6) Marca como cancelado
             pedido.Estado = EstadoPedido.Cancelado;
-            await _context.SaveChangesAsync();
+
+            var text = $"{nomeDaQuinta} cancelou o pedido #{pedido.Id}.";
 
             await _hubContext
                 .Clients
                 .Group("Admins")
                 .SendAsync("ReceiveNotification", new
                 {
-                    Mensagem = $"{nomeDaQuinta} cancelou o pedido #{pedido.Id}."
+                    Mensagem = text
             });
+
+            _context.Notifications.Add(new Notification
+            {
+                QuintaId = userQuintaId,
+                Message = text,
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false,
+                Direction = NotificationDirection.UserToAdmin
+            });
+
+            // 5) Grava a mudança de estado
+            await _context.SaveChangesAsync();
 
             return Ok("Pedido cancelado e stock reposto com sucesso.");
         }

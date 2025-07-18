@@ -1,0 +1,105 @@
+﻿@model IEnumerable<AppVinhosFinal.Models.Notification>
+@using AppVinhosFinal.Entities
+@{
+    ViewData["Title"] = "Notificações";
+}
+
+<style>
+    .bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/Images/ImageVineyards.jpg') no-repeat center center fixed;
+        background-size: cover;
+        filter: blur(8px);
+        z-index: -1;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding: 3rem;
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin: 2rem auto;
+    }
+</style>
+
+<div class="bg-image"></div>
+<div class="content-wrapper container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Notificações</h2>
+            <small class="text-muted">Gerir as notificações</small>
+        </div>
+        <!-- Botão Marcar todas como lidas -->
+        <form asp-controller="Notifications" asp-action="MarkAllRead" method="post">
+            <button type="submit" class="btn btn-outline-primary">
+                Marcar todas como lidas
+            </button>
+        </form>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            Todas as notificações
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data</th>
+                            <th>Mensagem</th>
+                            <th>Origem</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var n in Model)
+                        {
+                            <tr class="@(n.IsRead ? "" : "table-warning")">
+                                <td>@n.CreatedAt.ToString("g")</td>
+                                <td>@n.Message</td>
+                                <td>
+                                    @if (n.Direction == NotificationDirection.UserToAdmin)
+                                    {
+                                        <span class="badge bg-primary">Utilizador → Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Admin → Utilizador</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (n.IsRead)
+                                    {
+                                        <span class="text-muted">Lida</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">Por ler</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (!n.IsRead)
+                                    {
+                                        <form asp-action="MarkRead" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@n.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                Marcar como lida
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -126,8 +126,7 @@ namespace AppVinhosFinal.Controllers
                 return BadRequest("Não foi possível determinar a Quinta para notificação.");
             }
 
-            // 5) Grava a mudança de estado
-            await _context.SaveChangesAsync();
+            var text = $"Pedido #{pedido.Id} aprovado.";
 
             // 7) Dispara a notificação a todos os utilizadores ligados a esta Quinta
             await _hubContext
@@ -135,8 +134,20 @@ namespace AppVinhosFinal.Controllers
                 .Group($"Quinta-{QuintaId}")
                 .SendAsync("ReceiveNotification", new
                 {
-                    Mensagem = $"Pedido #{pedido.Id} aprovado."
+                    Mensagem = text
                 });
+
+            _context.Notifications.Add(new Notification
+            {
+                QuintaId = QuintaId,
+                Message = text,
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false,
+                Direction = NotificationDirection.AdminToUser
+            });
+
+            // 5) Grava a mudança de estado
+            await _context.SaveChangesAsync();
 
             return Ok("Pedido aprovado com sucesso.");
         }

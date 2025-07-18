@@ -72,8 +72,8 @@
           const redirectUrl = isAdmin
             ? '@Url.Action("Index", "AllPedidos")'
             : '@Url.Action("Index", "Pedidos")';
+          const allUrl = '@Url.Action("Index", "Notifications")';
 
-          // Atualiza badge (visível se count>0)
           function updateBadge(count) {
             const badge = document.getElementById('notifBadge');
             if (count > 0) {
@@ -84,10 +84,8 @@
             }
           }
 
-          // Renderiza dropdown com no máximo 5 notificações + botão "Ver todas"
           function refreshDropdown(arr) {
             const container = document.getElementById('notifItems');
-            // limpa todas as entradas dinâmicas e placeholder
             container.querySelectorAll('li.dynamic, li.placeholder').forEach(el => el.remove());
 
             if (arr.length === 0) {
@@ -100,7 +98,6 @@
               li.appendChild(a);
               container.appendChild(li);
             } else {
-              // mostra só os primeiros 5
               arr.slice(0, 5).forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'dynamic';
@@ -109,37 +106,39 @@
                 a.href = redirectUrl;
                 a.dataset.id = item.id;
                 a.textContent = item.msg;
-                a.addEventListener('click', e => removeNotif(item.id));
+                a.addEventListener('click', () => removeNotif(item.id));
                 li.appendChild(a);
                 container.appendChild(li);
               });
-              // se houver mais de 5, adiciona botão Ver todas
-              if (arr.length > 5) {
-                const li = document.createElement('li');
-                li.className = 'dynamic';
-                const a = document.createElement('a');
-                a.className = 'dropdown-item text-center';
-                a.href = '@Url.Action("Index", "Notifications")';
-                a.textContent = 'Ver todas as notificações';
-                li.appendChild(a);
-                container.appendChild(li);
-              }
             }
+
+            // botão "Ver todas as notificações" sempre no fundo
+            const liAll = document.createElement('li');
+            liAll.className = 'dynamic';
+            const aAll = document.createElement('a');
+            aAll.className = 'dropdown-item text-center';
+            aAll.href = allUrl;
+            aAll.textContent = 'Ver todas as notificações';
+            // ao clicares, limpa a central antes de navegar
+            aAll.addEventListener('click', function() {
+              localStorage.removeItem(storageKey);
+              updateBadge(0);
+            });
+            liAll.appendChild(aAll);
+            container.appendChild(liAll);
+
             updateBadge(arr.length);
           }
 
-          // Carrega do localStorage
           function loadNotifs() {
             const arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
             refreshDropdown(arr);
           }
 
-          // Guarda no localStorage
           function saveNotifs(arr) {
             localStorage.setItem(storageKey, JSON.stringify(arr));
           }
 
-          // Adiciona nova notificação
           function addNotif(msg) {
             const id = Date.now().toString();
             let arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -149,7 +148,6 @@
             showToast(msg);
           }
 
-          // Remove só quando clicado
           function removeNotif(id) {
             let arr = JSON.parse(localStorage.getItem(storageKey) || '[]');
             arr = arr.filter(x => x.id !== id);
@@ -157,7 +155,6 @@
             refreshDropdown(arr);
           }
 
-          // Mostrar toast Bootstrap
           function showToast(msg) {
             const container = document.getElementById('toastContainer');
             const toastEl = document.createElement('div');
@@ -172,11 +169,10 @@
                         data-bs-dismiss="toast" aria-label="Fechar"></button>
               </div>`;
             container.appendChild(toastEl);
-            const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-            toast.show();
+            new bootstrap.Toast(toastEl, { delay: 5000 }).show();
           }
 
-          // signalR
+          // SignalR
           const connection = new signalR.HubConnectionBuilder()
             .withUrl('/notificationHub', { withCredentials: true })
             .build();

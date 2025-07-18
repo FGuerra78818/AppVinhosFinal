@@ -29,6 +29,7 @@ namespace AppVinhosFinal.Entities
         public DbSet<Quintas> Quintas { get; set; }
         public DbSet<Pedidos> Pedidos { get; set; }
         public DbSet<PedidoVinho> PedidoVinhos { get; set; }
+        public DbSet<Notification> Notifications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
