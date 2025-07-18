@@ -53,27 +53,16 @@
                         <tr>
                             <th>Data</th>
                             <th>Mensagem</th>
-                            <th>Origem</th>
                             <th>Estado</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="notifTableBody">
                         @foreach (var n in Model)
                         {
                             <tr class="@(n.IsRead ? "" : "table-warning")">
                                 <td>@n.CreatedAt.ToString("g")</td>
                                 <td>@n.Message</td>
-                                <td>
-                                    @if (n.Direction == NotificationDirection.UserToAdmin)
-                                    {
-                                        <span class="badge bg-primary">Utilizador → Admin</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">Admin → Utilizador</span>
-                                    }
-                                </td>
                                 <td>
                                     @if (n.IsRead)
                                     {
@@ -103,3 +92,44 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script>
+        (function() {
+          const connection = new signalR.HubConnectionBuilder()
+            .withUrl('/notificationHub', { withCredentials: true })
+            .build();
+
+          connection.on('ReceiveNotification', data => {
+            const msg = data.Mensagem || data.mensagem || data.message || 'Nova notificação';
+            // Obtém data e hora no formato dd/MM/yyyy HH:mm
+            const now = new Date();
+            const day   = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year  = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const mins  = String(now.getMinutes()).padStart(2, '0');
+            const formatted = `${day}/${month}/${year} ${hours}:${mins}`;
+
+            const tr = document.createElement('tr');
+            tr.className = 'table-warning';
+            tr.innerHTML = `
+              <td>${formatted}</td>
+              <td>${msg}</td>
+              <td><span class="text-danger">Por ler</span></td>
+              <td class="text-end">
+                <form action="/Notifications/MarkRead" method="post" class="d-inline">
+                  <input type="hidden" name="id" value="" />
+                  <button class="btn btn-sm btn-outline-primary">Marcar como lida</button>
+                </form>
+              </td>`;
+
+            const tbody = document.getElementById('notifTableBody');
+            tbody.prepend(tr);
+          });
+
+          connection.start().catch(err => console.error(err));
+        })();
+    </script>
+}

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,12 +9,24 @@
     <link rel="stylesheet" href="~/AppVinhosFinal.styles.css" asp-append-version="true" />
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-          integrity="sha512-...o teu hash..."
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        /* Garante que os toasts aparecem sempre por cima */
+        #toastContainer {
+            z-index: 3000;
+        }
+        /* Eleva o dropdown de notificações sobre o bottom-nav */
+        #notifItems.dropdown-menu {
+            z-index: 2000 !important;
+        }
+    </style>
 </head>
 <body>
+    <!-- Container global de Toasts -->
+    <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+
     <!-- Desktop Header -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3 d-none d-md-flex">
@@ -70,7 +82,8 @@
                asp-controller="Home" asp-action="Index">
                 <i class="bi bi-house-fill fs-4"></i><br />Início
             </a>
-            @if (User.Identity.IsAuthenticated && User.IsInRole("User")){
+            @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+            {
                 <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
                    asp-controller="Wines" asp-action="Index">
                     <i class="bi bi-box-seam fs-4"></i><br />Stock
@@ -80,22 +93,22 @@
                     <i class="bi bi-cart fs-4"></i><br />Pedidos
                 </a>
                 <a class="nav-link text-center @(ViewContext.RouteData.Values["action"].ToString()=="Create"
-                     && ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
+                     && ViewContext.RouteData.Values["controller"].ToString()=="Pedidos"?"active":"")"
                    asp-controller="Pedidos" asp-action="Create">
                     <i class="bi bi-plus-lg fs-4"></i><br />Novo
                 </a>
             }
             else if (User.Identity.IsAuthenticated && (User.IsInRole("Staff") || User.IsInRole("Admin")))
             {
-                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Wines"?"active":"")"
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="AllWines"?"active":"")"
                    asp-controller="AllWines" asp-action="Index">
                     <i class="bi bi-box-seam fs-4"></i><br />Stock
                 </a>
-                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Pedidos"?"active":"")"
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="AllPedidos"?"active":"")"
                    asp-controller="AllPedidos" asp-action="Index">
                     <i class="bi bi-cart fs-4"></i><br />Pedidos
                 </a>
-                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="Users"?"active":"")"
+                <a class="nav-link text-center @(ViewContext.RouteData.Values["controller"].ToString()=="AllUsers"?"active":"")"
                    asp-controller="AllUsers" asp-action="Index">
                     <i class="bi bi-person-circle fs-4"></i><br />Users
                 </a>

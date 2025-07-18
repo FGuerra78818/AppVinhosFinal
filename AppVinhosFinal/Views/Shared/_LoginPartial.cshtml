@@ -1,5 +1,4 @@
-﻿@* _LoginPartial.cshtml *@
-@using Microsoft.AspNetCore.Mvc
+﻿@using Microsoft.AspNetCore.Mvc
 @{
     var isAuth = Context.User.Identity?.IsAuthenticated == true;
     var userName = Context.User.Identity?.Name;
@@ -21,10 +20,19 @@
                 class="dropdown-menu dropdown-menu-end mt-2"
                 aria-labelledby="notifDropdown"
                 style="width:300px; max-height:400px; overflow-y:auto; z-index:1050;">
-                <li class="dropdown-header">Notificações</li>
+                <!-- cabeçalho com botão Limpar -->
+                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                    <span>Notificações</span>
+                    <button id="clearNotifsBtn" type="button" class="btn btn-sm btn-outline-secondary">
+                        🗑️
+                    </button>
+                </li>
                 <li><hr class="dropdown-divider" /></li>
-                <li class="placeholder">
-                    <a class="dropdown-item text-muted" href="#">Sem novas notificações</a>
+                <!-- placeholder inicial -->
+                <li class="dynamic">
+                    <a class="dropdown-item text-center disabled w-100" href="javascript:void(0)" tabindex="-1" aria-disabled="true">
+                        Sem novas notificações
+                    </a>
                 </li>
             </ul>
         </div>
@@ -86,14 +94,17 @@
 
           function refreshDropdown(arr) {
             const container = document.getElementById('notifItems');
-            container.querySelectorAll('li.dynamic, li.placeholder').forEach(el => el.remove());
+            // remove apenas os itens dinâmicos (mantém o header e divider)
+            container.querySelectorAll('li.dynamic').forEach(el => el.remove());
 
             if (arr.length === 0) {
               const li = document.createElement('li');
-              li.className = 'placeholder';
+              li.className = 'dynamic';
               const a = document.createElement('a');
-              a.className = 'dropdown-item text-muted';
-              a.href = '#';
+              a.className = 'dropdown-item text-center disabled w-100';
+              a.href = 'javascript:void(0)';
+              a.tabIndex = -1;
+              a.ariaDisabled = true;
               a.textContent = 'Sem novas notificações';
               li.appendChild(a);
               container.appendChild(li);
@@ -171,6 +182,19 @@
             container.appendChild(toastEl);
             new bootstrap.Toast(toastEl, { delay: 5000 }).show();
           }
+
+          // handler do botão Limpar (🗑️)
+          document.getElementById('clearNotifsBtn').addEventListener('click', () => {
+            localStorage.removeItem(storageKey);
+            const container = document.getElementById('notifItems');
+            container.querySelectorAll('li.dynamic').forEach(el => el.remove());
+            // repõe placeholder
+            const li = document.createElement('li');
+            li.className = 'dynamic';
+            li.innerHTML = '<a class="dropdown-item text-center disabled w-100" href="javascript:void(0)" tabindex="-1" aria-disabled="true">Sem novas notificações</a>';
+            container.appendChild(li);
+            updateBadge(0);
+          });
 
           // SignalR
           const connection = new signalR.HubConnectionBuilder()

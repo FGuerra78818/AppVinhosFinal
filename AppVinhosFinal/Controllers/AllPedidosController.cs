@@ -141,7 +141,6 @@ namespace AppVinhosFinal.Controllers
             {
                 QuintaId = QuintaId,
                 Message = text,
-                CreatedAt = DateTime.UtcNow,
                 IsRead = false,
                 Direction = NotificationDirection.AdminToUser
             });

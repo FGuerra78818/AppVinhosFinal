@@ -167,7 +167,6 @@ namespace AppVinhosFinal.Controllers
             {
                 QuintaId = quintaId,
                 Message = text,
-                CreatedAt = DateTime.UtcNow,
                 IsRead = false,
                 Direction = NotificationDirection.UserToAdmin
             });
@@ -267,7 +266,6 @@ namespace AppVinhosFinal.Controllers
             {
                 QuintaId = userQuintaId,
                 Message = text,
-                CreatedAt = DateTime.UtcNow,
                 IsRead = false,
                 Direction = NotificationDirection.UserToAdmin
             });
