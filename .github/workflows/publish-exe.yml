@@ -24,12 +24,12 @@ jobs:
 
       - name: Publicar executável
         run: |
-          dotnet publish ./AppVinhosFinal.csproj \
-            --configuration Release \
-            --runtime win-x64 \
-            --self-contained true \
-            /p:PublishSingleFile=true \
-            -o publish
+          dotnet publish `
+            -c Release `
+            -r win-x64 `
+            --self-contained `
+            /p:PublishSingleFile=true `
+            -o ./publish
 
       - name: Criar Release no GitHub
         id: create_release
