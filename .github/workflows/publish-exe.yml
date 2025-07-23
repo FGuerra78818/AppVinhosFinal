@@ -25,7 +25,7 @@ jobs:
         run: dotnet restore ./AppVinhosFinal/AppVinhosFinal.csproj
 
       - name: Publicar executável
-        run: dotnet publish ./AppVinhosFinal/AppVinhosFinal.csproj -c Release -r win-x64 --self-contained /p:PublishSingleFile=true -o ./publish
+        run: dotnet publish ./AppVinhosFinal/AppVinhosFinal.csproj -c Release -r win-x64 --self-contained true -o ./publish
 
       - name: Criar Release no GitHub
         id: create_release
