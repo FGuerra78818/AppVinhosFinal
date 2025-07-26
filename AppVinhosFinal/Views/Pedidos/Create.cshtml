@@ -55,8 +55,8 @@
                 align-items: center;
                 justify-content: center;
                 height: 100%;
-                padding: 0; /* remove padding extra */
-                border-radius: 0; /* alinha com o resto da tabela */
+                padding: 0;
+                border-radius: 0;
             }
 </style>
 
@@ -70,7 +70,7 @@
         <small class="text-muted">Preencha os detalhes do pedido</small>
     </div>
 
-    <form asp-action="Create" method="post">
+    <form id="pedidoForm" asp-action="Create" method="post">
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="card-title mb-4">
@@ -92,74 +92,55 @@
                             var sel = pv.Tipo.ToString();
                             <tr>
                                 <td>
-                                    <select name="PedidoVinhos[@i].IdVinho"
-                                            class="form-control"
-                                            data-selected="@pv.IdVinho"
-                                            data-stock="">
-                                    </select>
-                                    <span asp-validation-for="PedidoVinhos[@i].IdVinho"
-                                          class="text-danger"></span>
+                                    <select name="PedidoVinhos[@i].IdVinho" class="form-control" data-selected="@pv.IdVinho" data-stock=""></select>
+                                    <span asp-validation-for="PedidoVinhos[@i].IdVinho" class="text-danger"></span>
                                 </td>
                                 <td>
-                                    <input type="number"
-                                           name="PedidoVinhos[@i].Quantidade"
-                                           value="@pv.Quantidade"
-                                           class="form-control"
-                                           min="1"
-                                           max="" />
-                                    <span asp-validation-for="PedidoVinhos[@i].Quantidade"
-                                          class="text-danger"></span>
+                                    <input type="number" name="PedidoVinhos[@i].Quantidade" value="@pv.Quantidade" class="form-control" min="1" max="" />
+                                    <span asp-validation-for="PedidoVinhos[@i].Quantidade" class="text-danger"></span>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                         <label class="btn btn-info @(sel=="Frio"?"active":"")">
-                                            <input type="radio"
-                                                   name="PedidoVinhos[@i].Tipo"
-                                                   value="Frio"
-                                                   autocomplete="off"
-                                            @(sel == "Frio" ? "checked" : "") />
+                                            <input type="radio" name="PedidoVinhos[@i].Tipo" value="Frio" autocomplete="off" @(sel == "Frio" ? "checked" : "") />
                                             <i></i>
                                         </label>
                                         <label class="btn btn-danger @(sel=="Quente"?"active":"")">
-                                            <input type="radio"
-                                                   name="PedidoVinhos[@i].Tipo"
-                                                   value="Quente"
-                                                   autocomplete="off"
-                                            @(sel == "Quente" ? "checked" : "") />
+                                            <input type="radio" name="PedidoVinhos[@i].Tipo" value="Quente" autocomplete="off" @(sel == "Quente" ? "checked" : "") />
                                             <i></i>
                                         </label>
                                     </div>
                                 </td>
                                 <td>
-                                    <button type="button align-middle"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="removerLinha(this)">
-                                        ×
-                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="removerLinha(this)">×</button>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                <button type="button" id="btn-add-vinho" class="btn btn-secondary" onclick="adicionarLinha()">
-                    Adicionar Vinho
-                </button>
+                <button type="button" id="btn-add-vinho" class="btn btn-secondary" onclick="adicionarLinha()">Adicionar Vinho</button>
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary me-2">Criar Pedido</button>
+            <button id="btnSubmitPedido" type="submit" class="btn btn-primary me-2">Criar Pedido</button>
         </div>
     </form>
 </div>
 
 @section Scripts {
     <script>
+        // Desativa o botão e mostra feedback ao submeter o formulário
+        document.getElementById('pedidoForm').addEventListener('submit', function() {
+            var btn = document.getElementById('btnSubmitPedido');
+            btn.disabled = true;
+            btn.innerText = 'A processar...';
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const vinhosData = @Html.Raw(vinhosJson);
 
             function getSelectedIds() {
-                // Recolhe todos os Ids seleccionados nas linhas
-                return Array.from(document.querySelectorAll('select[name^="PedidoVinhos"]'))
+                return Array.from(document.querySelectorAll('select[name^="PedidoVinhos"][name$="].IdVinho"]'))
                     .map(sel => sel.value)
                     .filter(v => v);
             }
@@ -181,7 +162,7 @@
                         select.appendChild(o);
                     });
 
-                // Repõe seleção antiga, actualiza stock e max
+                // Repõe seleção antiga, atualiza stock e max
                 select.value = mySelected;
                 const wine = vinhosData.find(v => v.value === select.value);
                 const stock = wine ? wine.stock : 0;
@@ -264,4 +245,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
