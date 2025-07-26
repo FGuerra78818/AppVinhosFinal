@@ -288,8 +288,8 @@ namespace AppVinhosFinal.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MustChangePassword", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "QuintaId", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "15275553-15f4-44eb-a292-cb623faa36a2", new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc), "admin@vinhos.pt", true, false, null, false, "ADMIN@VINHOS.PT", "ADMIN", "AQAAAAIAAYagAAAAEK+Qb7TMU4hjo5E8s8VnJEKEnkHViHcN8h/ei9H5XsYFc4vQv9q2VpfjPembKjR0Vw==", null, false, null, "Admin", "a929fc2f-39a3-4dc4-a486-bf6e7173f599", false, "admin" },
-                    { 2, 0, "119987aa-d51e-4059-943e-95fa9e68742b", new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc), "staff01@vinhos.pt", true, false, null, false, "STAFF01@VINHOS.PT", "STAFF01", "AQAAAAIAAYagAAAAEAnM9CgGU3teRP2gxoZg0KuMMduD4l5LiRoSbBppnmAMrQvkbbQ8NiokOGTLQzRtZw==", null, false, null, "Staff", "ad692589-1309-4578-a8d0-d5a8325c48bb", false, "staff01" }
+                    { 1, 0, "291c2f92-03cc-4503-b5d1-8b218398e7fb", new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc), "admin@vinhos.pt", true, false, null, false, "ADMIN@VINHOS.PT", "ADMIN", "AQAAAAIAAYagAAAAEO8iofkkhWRBNQcPkXccBXQ65huiErAJJcgVebPwaZZXGjDR5j4mtmfnGB0lgOOjQg==", null, false, null, "Admin", "b8c88586-0b9e-417d-a197-5639d5565133", false, "admin" },
+                    { 2, 0, "29171b24-b5c3-4ad8-ae64-3734b05061bc", new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc), "staff01@vinhos.pt", true, false, null, false, "STAFF01@VINHOS.PT", "STAFF01", "AQAAAAIAAYagAAAAEIOHA5A0gYXxuOqORW1iT6maou2mVvZOJHWbMo/SBc4YFl7I6pBuu8CruYX/y+Iw/g==", null, false, null, "Staff", "31e0de36-b637-4349-862f-a4728b6a7e8b", false, "staff01" }
                 });
 
             migrationBuilder.InsertData(
@@ -344,10 +344,10 @@ namespace AppVinhosFinal.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MustChangePassword", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "QuintaId", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 3, 0, "9e1e31e8-ded1-4eb2-8ff0-d202e0ca1109", new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc), "visit1@vinhos.pt", true, false, null, true, "VISIT1@VINHOS.PT", "VISITANTE1", "AQAAAAIAAYagAAAAEI2FIcefiyRDoI1eoTfW9sUasKVMa1qe7+yKiXbnsiUSsPJl2awXhiTvV6ZdUY8EqQ==", null, false, 2, "User", "4d36d13a-fcd9-4f82-b790-7fdc622019a2", false, "visitante1" },
-                    { 4, 0, "234785bd-b4bf-4384-b20e-be4700396434", new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc), "user01@vinhos.pt", true, false, null, false, "USER01@VINHOS.PT", "USER01", "AQAAAAIAAYagAAAAEDoE8RrA4wuU5MnRBgac/J6NIa0/KVcWS8X2pjkUXr8AMh29rlaVztfuSktpJUTK1g==", null, false, 1, "User", "80bbd74b-7771-425e-8200-d5bc7f0d14d2", false, "user01" },
-                    { 5, 0, "14ed4681-b09d-4bb4-a08c-88b481541bde", new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc), "convid@vinhos.pt", true, false, null, false, "CONVID@VINHOS.PT", "CONVIDADO", "AQAAAAIAAYagAAAAEJr5vYU58pFpIfQo46/Qx+hnHySfA3oXQ6zBmO97Eg0tla0zVvYMwlndgpGxTfzFGA==", null, false, 5, "User", "9be5c624-fdb8-40fe-b314-c333f30ca091", false, "convidado" },
-                    { 6, 0, "9089247a-8c9a-4c35-abfc-69724d0e782d", new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc), "guest2@vinhos.pt", true, false, null, true, "GUEST2@VINHOS.PT", "GUEST2", "AQAAAAIAAYagAAAAEEVBHIB3/xzTwGP68PJi+FpoExuR+MkWP2E1+mluP9Lw8vw/w0Z7FeZRy1qA8tmKgw==", null, false, 6, "User", "8f156928-b31f-44b8-a44b-2ed5f9d1a6de", false, "guest2" }
+                    { 3, 0, "9b500abf-b4c8-45ea-a36f-ba3fc4e9ad07", new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc), "visit1@vinhos.pt", true, false, null, true, "VISIT1@VINHOS.PT", "VISITANTE1", "AQAAAAIAAYagAAAAEFhp7WjlPuxISOnedWYfiIFMfrESfSbBmxJhd3PUrvz+9E2B/0Isle6cdb9f7ZM8Ow==", null, false, 2, "User", "7a503764-15e5-43c4-8b9f-9413d99fb7c9", false, "visitante1" },
+                    { 4, 0, "00efb5f8-206f-4562-b25f-89c8009495ac", new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc), "user01@vinhos.pt", true, false, null, false, "USER01@VINHOS.PT", "USER01", "AQAAAAIAAYagAAAAEFhwfFR2V9+2lldE4Wm1YoTwgGMR7T5EOgU6dTa8JkXu8eUZVIo87LsoMgpQTTcIXg==", null, false, 1, "User", "98312e59-9e9f-4208-b537-5e6f6d060dd6", false, "user01" },
+                    { 5, 0, "32dae27b-e17c-458f-8c23-e7c84e833566", new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc), "convid@vinhos.pt", true, false, null, false, "CONVID@VINHOS.PT", "CONVIDADO", "AQAAAAIAAYagAAAAEOgSsyWLFtq1/ZaiRX9Uds5To6jMaZk80jZ7zzFa+jmOJ9ZQvtoAUIycoFD5Yv/Rhg==", null, false, 5, "User", "dc3c0e0e-c0ed-4765-88a1-68fdf6089c3b", false, "convidado" },
+                    { 6, 0, "dc97975f-4437-4363-b53d-9877d58d9a8d", new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc), "guest2@vinhos.pt", true, false, null, true, "GUEST2@VINHOS.PT", "GUEST2", "AQAAAAIAAYagAAAAEHusYjgay17N1b4Y4qeZILOnBhZ04W48epLU9xso4G7LlQsd3awvpAIQfve8P3z96g==", null, false, 6, "User", "6057d2dd-ab9a-44a4-9819-a84bfbfc7808", false, "guest2" }
                 });
 
             migrationBuilder.InsertData(
@@ -392,20 +392,20 @@ namespace AppVinhosFinal.Migrations
                     { 4, 3, 9, 10, 0 },
                     { 5, 4, 10, 15, 0 },
                     { 6, 4, 12, 5, 0 },
-                    { 7, 6, 13, 2, 0 },
-                    { 8, 6, 13, 3, 0 },
-                    { 9, 7, 17, 5, 0 },
-                    { 10, 7, 19, 4, 0 },
-                    { 11, 8, 21, 6, 0 },
-                    { 12, 9, 22, 8, 0 },
-                    { 13, 9, 23, 2, 0 },
-                    { 14, 9, 24, 1, 0 },
-                    { 15, 10, 5, 7, 0 },
-                    { 16, 10, 6, 3, 0 },
-                    { 17, 10, 7, 1, 0 },
-                    { 18, 11, 12, 0, 0 },
-                    { 19, 12, 3, 10, 0 },
-                    { 20, 12, 1, 2, 0 }
+                    { 7, 5, 13, 2, 0 },
+                    { 8, 5, 13, 3, 0 },
+                    { 9, 6, 17, 5, 0 },
+                    { 10, 6, 19, 4, 0 },
+                    { 11, 7, 21, 6, 0 },
+                    { 12, 8, 22, 8, 0 },
+                    { 13, 8, 23, 2, 0 },
+                    { 14, 8, 24, 1, 0 },
+                    { 15, 9, 5, 7, 0 },
+                    { 16, 9, 6, 3, 0 },
+                    { 17, 9, 7, 1, 0 },
+                    { 18, 10, 12, 2, 0 },
+                    { 19, 11, 3, 10, 0 },
+                    { 20, 11, 1, 2, 0 }
                 });
 
             migrationBuilder.CreateIndex(

@@ -108,7 +108,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "15275553-15f4-44eb-a292-cb623faa36a2",
+                            ConcurrencyStamp = "291c2f92-03cc-4503-b5d1-8b218398e7fb",
                             CreatedAt = new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@vinhos.pt",
                             EmailConfirmed = true,
@@ -116,10 +116,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "ADMIN@VINHOS.PT",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK+Qb7TMU4hjo5E8s8VnJEKEnkHViHcN8h/ei9H5XsYFc4vQv9q2VpfjPembKjR0Vw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO8iofkkhWRBNQcPkXccBXQ65huiErAJJcgVebPwaZZXGjDR5j4mtmfnGB0lgOOjQg==",
                             PhoneNumberConfirmed = false,
                             Role = "Admin",
-                            SecurityStamp = "a929fc2f-39a3-4dc4-a486-bf6e7173f599",
+                            SecurityStamp = "b8c88586-0b9e-417d-a197-5639d5565133",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -127,7 +127,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "119987aa-d51e-4059-943e-95fa9e68742b",
+                            ConcurrencyStamp = "29171b24-b5c3-4ad8-ae64-3734b05061bc",
                             CreatedAt = new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc),
                             Email = "staff01@vinhos.pt",
                             EmailConfirmed = true,
@@ -135,10 +135,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "STAFF01@VINHOS.PT",
                             NormalizedUserName = "STAFF01",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAnM9CgGU3teRP2gxoZg0KuMMduD4l5LiRoSbBppnmAMrQvkbbQ8NiokOGTLQzRtZw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIOHA5A0gYXxuOqORW1iT6maou2mVvZOJHWbMo/SBc4YFl7I6pBuu8CruYX/y+Iw/g==",
                             PhoneNumberConfirmed = false,
                             Role = "Staff",
-                            SecurityStamp = "ad692589-1309-4578-a8d0-d5a8325c48bb",
+                            SecurityStamp = "31e0de36-b637-4349-862f-a4728b6a7e8b",
                             TwoFactorEnabled = false,
                             UserName = "staff01"
                         },
@@ -146,7 +146,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9e1e31e8-ded1-4eb2-8ff0-d202e0ca1109",
+                            ConcurrencyStamp = "9b500abf-b4c8-45ea-a36f-ba3fc4e9ad07",
                             CreatedAt = new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc),
                             Email = "visit1@vinhos.pt",
                             EmailConfirmed = true,
@@ -154,11 +154,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "VISIT1@VINHOS.PT",
                             NormalizedUserName = "VISITANTE1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI2FIcefiyRDoI1eoTfW9sUasKVMa1qe7+yKiXbnsiUSsPJl2awXhiTvV6ZdUY8EqQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFhp7WjlPuxISOnedWYfiIFMfrESfSbBmxJhd3PUrvz+9E2B/0Isle6cdb9f7ZM8Ow==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 2,
                             Role = "User",
-                            SecurityStamp = "4d36d13a-fcd9-4f82-b790-7fdc622019a2",
+                            SecurityStamp = "7a503764-15e5-43c4-8b9f-9413d99fb7c9",
                             TwoFactorEnabled = false,
                             UserName = "visitante1"
                         },
@@ -166,7 +166,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "234785bd-b4bf-4384-b20e-be4700396434",
+                            ConcurrencyStamp = "00efb5f8-206f-4562-b25f-89c8009495ac",
                             CreatedAt = new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc),
                             Email = "user01@vinhos.pt",
                             EmailConfirmed = true,
@@ -174,11 +174,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "USER01@VINHOS.PT",
                             NormalizedUserName = "USER01",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDoE8RrA4wuU5MnRBgac/J6NIa0/KVcWS8X2pjkUXr8AMh29rlaVztfuSktpJUTK1g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFhwfFR2V9+2lldE4Wm1YoTwgGMR7T5EOgU6dTa8JkXu8eUZVIo87LsoMgpQTTcIXg==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 1,
                             Role = "User",
-                            SecurityStamp = "80bbd74b-7771-425e-8200-d5bc7f0d14d2",
+                            SecurityStamp = "98312e59-9e9f-4208-b537-5e6f6d060dd6",
                             TwoFactorEnabled = false,
                             UserName = "user01"
                         },
@@ -186,7 +186,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "14ed4681-b09d-4bb4-a08c-88b481541bde",
+                            ConcurrencyStamp = "32dae27b-e17c-458f-8c23-e7c84e833566",
                             CreatedAt = new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc),
                             Email = "convid@vinhos.pt",
                             EmailConfirmed = true,
@@ -194,11 +194,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "CONVID@VINHOS.PT",
                             NormalizedUserName = "CONVIDADO",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJr5vYU58pFpIfQo46/Qx+hnHySfA3oXQ6zBmO97Eg0tla0zVvYMwlndgpGxTfzFGA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOgSsyWLFtq1/ZaiRX9Uds5To6jMaZk80jZ7zzFa+jmOJ9ZQvtoAUIycoFD5Yv/Rhg==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 5,
                             Role = "User",
-                            SecurityStamp = "9be5c624-fdb8-40fe-b314-c333f30ca091",
+                            SecurityStamp = "dc3c0e0e-c0ed-4765-88a1-68fdf6089c3b",
                             TwoFactorEnabled = false,
                             UserName = "convidado"
                         },
@@ -206,7 +206,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9089247a-8c9a-4c35-abfc-69724d0e782d",
+                            ConcurrencyStamp = "dc97975f-4437-4363-b53d-9877d58d9a8d",
                             CreatedAt = new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc),
                             Email = "guest2@vinhos.pt",
                             EmailConfirmed = true,
@@ -214,11 +214,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "GUEST2@VINHOS.PT",
                             NormalizedUserName = "GUEST2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEVBHIB3/xzTwGP68PJi+FpoExuR+MkWP2E1+mluP9Lw8vw/w0Z7FeZRy1qA8tmKgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHusYjgay17N1b4Y4qeZILOnBhZ04W48epLU9xso4G7LlQsd3awvpAIQfve8P3z96g==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 6,
                             Role = "User",
-                            SecurityStamp = "8f156928-b31f-44b8-a44b-2ed5f9d1a6de",
+                            SecurityStamp = "6057d2dd-ab9a-44a4-9819-a84bfbfc7808",
                             TwoFactorEnabled = false,
                             UserName = "guest2"
                         });
@@ -411,7 +411,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 7,
-                            IdPedido = 6,
+                            IdPedido = 5,
                             IdVinho = 13,
                             Quantidade = 2,
                             Tipo = 0
@@ -419,7 +419,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 8,
-                            IdPedido = 6,
+                            IdPedido = 5,
                             IdVinho = 13,
                             Quantidade = 3,
                             Tipo = 0
@@ -427,7 +427,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 9,
-                            IdPedido = 7,
+                            IdPedido = 6,
                             IdVinho = 17,
                             Quantidade = 5,
                             Tipo = 0
@@ -435,7 +435,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 10,
-                            IdPedido = 7,
+                            IdPedido = 6,
                             IdVinho = 19,
                             Quantidade = 4,
                             Tipo = 0
@@ -443,7 +443,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 11,
-                            IdPedido = 8,
+                            IdPedido = 7,
                             IdVinho = 21,
                             Quantidade = 6,
                             Tipo = 0
@@ -451,7 +451,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 12,
-                            IdPedido = 9,
+                            IdPedido = 8,
                             IdVinho = 22,
                             Quantidade = 8,
                             Tipo = 0
@@ -459,7 +459,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 13,
-                            IdPedido = 9,
+                            IdPedido = 8,
                             IdVinho = 23,
                             Quantidade = 2,
                             Tipo = 0
@@ -467,7 +467,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 14,
-                            IdPedido = 9,
+                            IdPedido = 8,
                             IdVinho = 24,
                             Quantidade = 1,
                             Tipo = 0
@@ -475,7 +475,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 15,
-                            IdPedido = 10,
+                            IdPedido = 9,
                             IdVinho = 5,
                             Quantidade = 7,
                             Tipo = 0
@@ -483,7 +483,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 16,
-                            IdPedido = 10,
+                            IdPedido = 9,
                             IdVinho = 6,
                             Quantidade = 3,
                             Tipo = 0
@@ -491,7 +491,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 17,
-                            IdPedido = 10,
+                            IdPedido = 9,
                             IdVinho = 7,
                             Quantidade = 1,
                             Tipo = 0
@@ -499,15 +499,15 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 18,
-                            IdPedido = 11,
+                            IdPedido = 10,
                             IdVinho = 12,
-                            Quantidade = 0,
+                            Quantidade = 2,
                             Tipo = 0
                         },
                         new
                         {
                             Id = 19,
-                            IdPedido = 12,
+                            IdPedido = 11,
                             IdVinho = 3,
                             Quantidade = 10,
                             Tipo = 0
@@ -515,7 +515,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 20,
-                            IdPedido = 12,
+                            IdPedido = 11,
                             IdVinho = 1,
                             Quantidade = 2,
                             Tipo = 0
