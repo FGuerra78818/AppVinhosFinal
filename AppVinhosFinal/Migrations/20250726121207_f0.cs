@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,11 +18,11 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,11 +33,11 @@ namespace AppVinhosFinal.Migrations
                 name: "LogsCopos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    QuantidadeVendida = table.Column<int>(type: "int", nullable: false),
-                    DataHoraVenda = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Comprador = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    QuantidadeVendida = table.Column<int>(type: "integer", nullable: false),
+                    DataHoraVenda = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Comprador = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,14 +45,31 @@ namespace AppVinhosFinal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    QuintaId = table.Column<int>(type: "integer", nullable: true),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    Direction = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Pedidos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DataPedido = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DataAprovacao = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Estado = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DataPedido = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DataAprovacao = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Estado = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,10 +80,10 @@ namespace AppVinhosFinal.Migrations
                 name: "Quintas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NumeroMaxVinhoFrio = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "text", nullable: false),
+                    NumeroMaxVinhoFrio = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,11 +94,11 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,26 +115,26 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MustChangePassword = table.Column<bool>(type: "bit", nullable: false),
-                    QuintaId = table.Column<int>(type: "int", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Role = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    MustChangePassword = table.Column<bool>(type: "boolean", nullable: false),
+                    QuintaId = table.Column<int>(type: "integer", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,13 +150,14 @@ namespace AppVinhosFinal.Migrations
                 name: "Vinhos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Quantidade = table.Column<int>(type: "int", nullable: false),
-                    QuantidadeFria = table.Column<int>(type: "int", nullable: false),
-                    IdQuinta = table.Column<int>(type: "int", nullable: false),
-                    Estado = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Quantidade = table.Column<int>(type: "integer", nullable: false),
+                    QuantidadeFria = table.Column<int>(type: "integer", nullable: false),
+                    CapacidadeFria = table.Column<int>(type: "integer", nullable: false),
+                    IdQuinta = table.Column<int>(type: "integer", nullable: false),
+                    Estado = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -155,11 +174,11 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -176,10 +195,10 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,8 +215,8 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,10 +239,10 @@ namespace AppVinhosFinal.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -240,12 +259,12 @@ namespace AppVinhosFinal.Migrations
                 name: "PedidoVinhos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdPedido = table.Column<int>(type: "int", nullable: false),
-                    IdVinho = table.Column<int>(type: "int", nullable: false),
-                    Quantidade = table.Column<int>(type: "int", nullable: false),
-                    Tipo = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IdPedido = table.Column<int>(type: "integer", nullable: false),
+                    IdVinho = table.Column<int>(type: "integer", nullable: false),
+                    Quantidade = table.Column<int>(type: "integer", nullable: false),
+                    Tipo = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -269,8 +288,8 @@ namespace AppVinhosFinal.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MustChangePassword", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "QuintaId", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "9e888211-7371-43a1-be31-d40dc430fd97", new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc), "admin@vinhos.pt", true, false, null, false, "ADMIN@VINHOS.PT", "ADMIN", "AQAAAAIAAYagAAAAELLCoXq/PfEOhGCBMAekWan3EhKiP1o8jTfxxToumGLDSkJ+FvRghRxKp5zfo2Y/iw==", null, false, null, "Admin", "ea78c9ab-8fca-4fe6-a9d0-4d199f59b442", false, "admin" },
-                    { 2, 0, "9b2bb763-aa52-4b5f-8f05-5f31f07db971", new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc), "staff01@vinhos.pt", true, false, null, false, "STAFF01@VINHOS.PT", "STAFF01", "AQAAAAIAAYagAAAAEPYYnHHbYEn4hswjiV35PkDWtci6+dhQeYE6fw23YvPvXt726idAqU2JapOY1uL/gQ==", null, false, null, "Staff", "e95fd4d5-043d-4ada-a11d-5d01751b0139", false, "staff01" }
+                    { 1, 0, "15275553-15f4-44eb-a292-cb623faa36a2", new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc), "admin@vinhos.pt", true, false, null, false, "ADMIN@VINHOS.PT", "ADMIN", "AQAAAAIAAYagAAAAEK+Qb7TMU4hjo5E8s8VnJEKEnkHViHcN8h/ei9H5XsYFc4vQv9q2VpfjPembKjR0Vw==", null, false, null, "Admin", "a929fc2f-39a3-4dc4-a486-bf6e7173f599", false, "admin" },
+                    { 2, 0, "119987aa-d51e-4059-943e-95fa9e68742b", new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc), "staff01@vinhos.pt", true, false, null, false, "STAFF01@VINHOS.PT", "STAFF01", "AQAAAAIAAYagAAAAEAnM9CgGU3teRP2gxoZg0KuMMduD4l5LiRoSbBppnmAMrQvkbbQ8NiokOGTLQzRtZw==", null, false, null, "Staff", "ad692589-1309-4578-a8d0-d5a8325c48bb", false, "staff01" }
                 });
 
             migrationBuilder.InsertData(
@@ -325,41 +344,41 @@ namespace AppVinhosFinal.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MustChangePassword", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "QuintaId", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 3, 0, "ded0d9bd-a0bb-4798-9929-a69814976e2a", new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc), "visit1@vinhos.pt", true, false, null, true, "VISIT1@VINHOS.PT", "VISITANTE1", "AQAAAAIAAYagAAAAEKnMuNMNFR4PaxMnfbcZyTOxscJDV9ryitz+ALU0z76evWgXkRLR/ucTB59+h4UwAw==", null, false, 2, "User", "b7b7cf21-9aec-4e6a-9f19-32fd8a29f127", false, "visitante1" },
-                    { 4, 0, "78ea84b1-e027-49c9-814d-0cc00b7bcfdd", new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc), "user01@vinhos.pt", true, false, null, false, "USER01@VINHOS.PT", "USER01", "AQAAAAIAAYagAAAAEM/v/q/E2qJq+LwnmMMT5G/eaplrJblxocE2HJf6XoBkB++tdjxKsJwBGZ1stBHoRQ==", null, false, 1, "User", "2c962c9c-f923-4f06-84e9-d2b7cf0767f0", false, "user01" },
-                    { 5, 0, "5839f2d3-d1bc-4a27-a4f0-b0a474020ccc", new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc), "convid@vinhos.pt", true, false, null, false, "CONVID@VINHOS.PT", "CONVIDADO", "AQAAAAIAAYagAAAAEDmH/8K5OeUZbB3N9K2SW/0wx4h0l1IzHinuyth5f2J+xVKinGANEx/DjQpOQnfIXg==", null, false, 5, "User", "4128bfcb-eba0-4fa1-b384-17514da192b7", false, "convidado" },
-                    { 6, 0, "d8300612-bc1c-465f-ac0e-ad8e7daa161b", new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc), "guest2@vinhos.pt", true, false, null, true, "GUEST2@VINHOS.PT", "GUEST2", "AQAAAAIAAYagAAAAEEpVr4W9ISkzbQvqxhsjYeUoeO5VzYQFaeR30jqi/qY/wkzQDmpQ4N2GfdnAmUXPaQ==", null, false, 6, "User", "c848c8d4-98a5-4352-beda-5d08c366c956", false, "guest2" }
+                    { 3, 0, "9e1e31e8-ded1-4eb2-8ff0-d202e0ca1109", new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc), "visit1@vinhos.pt", true, false, null, true, "VISIT1@VINHOS.PT", "VISITANTE1", "AQAAAAIAAYagAAAAEI2FIcefiyRDoI1eoTfW9sUasKVMa1qe7+yKiXbnsiUSsPJl2awXhiTvV6ZdUY8EqQ==", null, false, 2, "User", "4d36d13a-fcd9-4f82-b790-7fdc622019a2", false, "visitante1" },
+                    { 4, 0, "234785bd-b4bf-4384-b20e-be4700396434", new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc), "user01@vinhos.pt", true, false, null, false, "USER01@VINHOS.PT", "USER01", "AQAAAAIAAYagAAAAEDoE8RrA4wuU5MnRBgac/J6NIa0/KVcWS8X2pjkUXr8AMh29rlaVztfuSktpJUTK1g==", null, false, 1, "User", "80bbd74b-7771-425e-8200-d5bc7f0d14d2", false, "user01" },
+                    { 5, 0, "14ed4681-b09d-4bb4-a08c-88b481541bde", new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc), "convid@vinhos.pt", true, false, null, false, "CONVID@VINHOS.PT", "CONVIDADO", "AQAAAAIAAYagAAAAEJr5vYU58pFpIfQo46/Qx+hnHySfA3oXQ6zBmO97Eg0tla0zVvYMwlndgpGxTfzFGA==", null, false, 5, "User", "9be5c624-fdb8-40fe-b314-c333f30ca091", false, "convidado" },
+                    { 6, 0, "9089247a-8c9a-4c35-abfc-69724d0e782d", new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc), "guest2@vinhos.pt", true, false, null, true, "GUEST2@VINHOS.PT", "GUEST2", "AQAAAAIAAYagAAAAEEVBHIB3/xzTwGP68PJi+FpoExuR+MkWP2E1+mluP9Lw8vw/w0Z7FeZRy1qA8tmKgw==", null, false, 6, "User", "8f156928-b31f-44b8-a44b-2ed5f9d1a6de", false, "guest2" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Vinhos",
-                columns: new[] { "Id", "Estado", "IdQuinta", "Nome", "Quantidade", "QuantidadeFria" },
+                columns: new[] { "Id", "CapacidadeFria", "Estado", "IdQuinta", "Nome", "Quantidade", "QuantidadeFria" },
                 values: new object[,]
                 {
-                    { 1, 0, 1, "Tinto Clássico", 50, 10 },
-                    { 2, 0, 1, "Branco Seco", 40, 5 },
-                    { 3, 0, 1, "Rosé Alegre", 60, 20 },
-                    { 4, 0, 1, "Espumante Delicado", 30, 30 },
-                    { 5, 0, 2, "Tinto Intenso II", 45, 0 },
-                    { 6, 0, 2, "Branco Floral", 25, 25 },
-                    { 7, 0, 2, "Rosé de Verão", 70, 35 },
-                    { 8, 1, 2, "Espumante Brut", 80, 50 },
-                    { 9, 0, 3, "Tinto Reserva", 75, 15 },
-                    { 10, 0, 3, "Branco Suave", 90, 45 },
-                    { 11, 0, 3, "Rosé Primavera", 100, 60 },
-                    { 12, 0, 3, "Espumante Rosé", 50, 50 },
-                    { 13, 0, 4, "Tinto Envelhecido", 40, 20 },
-                    { 14, 0, 4, "Branco Cítrico", 60, 30 },
-                    { 15, 1, 4, "Rosé Aromático", 55, 25 },
-                    { 16, 0, 4, "Espumante Premium", 80, 80 },
-                    { 17, 0, 5, "Tinto Ensolarado", 65, 35 },
-                    { 18, 0, 5, "Branco Seco Especial", 110, 70 },
-                    { 19, 0, 5, "Rosé Tropical", 85, 45 },
-                    { 20, 0, 5, "Espumante de Honra", 90, 60 },
-                    { 21, 0, 6, "Tinto Forte", 80, 40 },
-                    { 22, 0, 6, "Branco Frutado", 95, 50 },
-                    { 23, 0, 6, "Rosé Encantado", 120, 60 },
-                    { 24, 0, 6, "Espumante Real", 100, 80 }
+                    { 1, 0, 0, 1, "Tinto Clássico", 50, 10 },
+                    { 2, 0, 0, 1, "Branco Seco", 40, 5 },
+                    { 3, 0, 0, 1, "Rosé Alegre", 60, 20 },
+                    { 4, 0, 0, 1, "Espumante Delicado", 30, 30 },
+                    { 5, 0, 0, 2, "Tinto Intenso II", 45, 0 },
+                    { 6, 0, 0, 2, "Branco Floral", 25, 25 },
+                    { 7, 0, 0, 2, "Rosé de Verão", 70, 35 },
+                    { 8, 0, 1, 2, "Espumante Brut", 80, 50 },
+                    { 9, 0, 0, 3, "Tinto Reserva", 75, 15 },
+                    { 10, 0, 0, 3, "Branco Suave", 90, 45 },
+                    { 11, 0, 0, 3, "Rosé Primavera", 100, 60 },
+                    { 12, 0, 0, 3, "Espumante Rosé", 50, 50 },
+                    { 13, 0, 0, 4, "Tinto Envelhecido", 40, 20 },
+                    { 14, 0, 0, 4, "Branco Cítrico", 60, 30 },
+                    { 15, 0, 1, 4, "Rosé Aromático", 55, 25 },
+                    { 16, 0, 0, 4, "Espumante Premium", 80, 80 },
+                    { 17, 0, 0, 5, "Tinto Ensolarado", 65, 35 },
+                    { 18, 0, 0, 5, "Branco Seco Especial", 110, 70 },
+                    { 19, 0, 0, 5, "Rosé Tropical", 85, 45 },
+                    { 20, 0, 0, 5, "Espumante de Honra", 90, 60 },
+                    { 21, 0, 0, 6, "Tinto Forte", 80, 40 },
+                    { 22, 0, 0, 6, "Branco Frutado", 95, 50 },
+                    { 23, 0, 0, 6, "Rosé Encantado", 120, 60 },
+                    { 24, 0, 0, 6, "Espumante Real", 100, 80 }
                 });
 
             migrationBuilder.InsertData(
@@ -398,8 +417,7 @@ namespace AppVinhosFinal.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -430,8 +448,7 @@ namespace AppVinhosFinal.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PedidoVinhos_IdPedido",
@@ -475,6 +492,9 @@ namespace AppVinhosFinal.Migrations
 
             migrationBuilder.DropTable(
                 name: "LogsCopos");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "PedidoVinhos");

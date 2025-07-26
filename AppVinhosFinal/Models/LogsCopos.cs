@@ -11,7 +11,7 @@ namespace AppVinhosFinal.Models
         public int QuantidadeVendida { get; set; }
 
         [Required]
-        public DateTime DataHoraVenda { get; set; } = DateTime.Now;
+        public DateTime DataHoraVenda { get; set; } = DateTime.UtcNow;
 
         public string? Comprador { get; set; }
     }

@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Resend;
 using AppVinhosFinal.Hubs;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. DbContext com Identity
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 2. Identity (regista automaticamente o cookie “Identity.Application”)
 builder.Services.AddIdentity<UserAccount, IdentityRole<int>>(options =>

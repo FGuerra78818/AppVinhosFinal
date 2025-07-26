@@ -3,17 +3,17 @@ using System;
 using AppVinhosFinal.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace AppVinhosFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717121013_f2")]
-    partial class f2
+    [Migration("20250726121207_f0")]
+    partial class f0
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,77 +21,77 @@ namespace AppVinhosFinal.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.17")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("AppVinhosFinal.Entities.UserAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("MustChangePassword")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("QuintaId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -100,8 +100,7 @@ namespace AppVinhosFinal.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.HasIndex("QuintaId");
 
@@ -112,7 +111,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9a10a750-9f9f-42ab-b00f-7a92faf04ef3",
+                            ConcurrencyStamp = "15275553-15f4-44eb-a292-cb623faa36a2",
                             CreatedAt = new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@vinhos.pt",
                             EmailConfirmed = true,
@@ -120,10 +119,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "ADMIN@VINHOS.PT",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJ87f7T0vBoBQgP8jzbb+hu9CJTfIu5nO9HAS4n/r3EqRc+2k2FpfjxSqQp1oHRi3A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK+Qb7TMU4hjo5E8s8VnJEKEnkHViHcN8h/ei9H5XsYFc4vQv9q2VpfjPembKjR0Vw==",
                             PhoneNumberConfirmed = false,
                             Role = "Admin",
-                            SecurityStamp = "8084b8d8-cd11-4b1a-af5e-d169424185c7",
+                            SecurityStamp = "a929fc2f-39a3-4dc4-a486-bf6e7173f599",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -131,7 +130,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8653afc0-365d-44af-adb4-24151f10d7ca",
+                            ConcurrencyStamp = "119987aa-d51e-4059-943e-95fa9e68742b",
                             CreatedAt = new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc),
                             Email = "staff01@vinhos.pt",
                             EmailConfirmed = true,
@@ -139,10 +138,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "STAFF01@VINHOS.PT",
                             NormalizedUserName = "STAFF01",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMbSdO+ysIaL3e74MfMtTiy4wNFwefF8/yIcwIIHxqGFKJ3xYEsyI5moYThpH4N8sg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAnM9CgGU3teRP2gxoZg0KuMMduD4l5LiRoSbBppnmAMrQvkbbQ8NiokOGTLQzRtZw==",
                             PhoneNumberConfirmed = false,
                             Role = "Staff",
-                            SecurityStamp = "586ac775-dc99-49ee-b1f7-cd11f94313c3",
+                            SecurityStamp = "ad692589-1309-4578-a8d0-d5a8325c48bb",
                             TwoFactorEnabled = false,
                             UserName = "staff01"
                         },
@@ -150,7 +149,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "77eb8aa5-a637-41b3-a462-0b90556b88d2",
+                            ConcurrencyStamp = "9e1e31e8-ded1-4eb2-8ff0-d202e0ca1109",
                             CreatedAt = new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc),
                             Email = "visit1@vinhos.pt",
                             EmailConfirmed = true,
@@ -158,11 +157,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "VISIT1@VINHOS.PT",
                             NormalizedUserName = "VISITANTE1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHJAFgEWseqm91GP6JERHuEZgYSO9g0Y796J4EhhOcmdNGgrmC3n7D4jMI0PfD0WIg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI2FIcefiyRDoI1eoTfW9sUasKVMa1qe7+yKiXbnsiUSsPJl2awXhiTvV6ZdUY8EqQ==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 2,
                             Role = "User",
-                            SecurityStamp = "ae7c6076-5a6d-46cf-a53e-0fc9019f0f20",
+                            SecurityStamp = "4d36d13a-fcd9-4f82-b790-7fdc622019a2",
                             TwoFactorEnabled = false,
                             UserName = "visitante1"
                         },
@@ -170,7 +169,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "620069c3-00b1-4883-956a-2419cfd027e3",
+                            ConcurrencyStamp = "234785bd-b4bf-4384-b20e-be4700396434",
                             CreatedAt = new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc),
                             Email = "user01@vinhos.pt",
                             EmailConfirmed = true,
@@ -178,11 +177,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "USER01@VINHOS.PT",
                             NormalizedUserName = "USER01",
-                            PasswordHash = "AQAAAAIAAYagAAAAEESbjKcLfjs1l04lUpNjHAGZsW6UryIFPpWboyW+5xvc3dcHtfp6On3+9zE5eLm36g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDoE8RrA4wuU5MnRBgac/J6NIa0/KVcWS8X2pjkUXr8AMh29rlaVztfuSktpJUTK1g==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 1,
                             Role = "User",
-                            SecurityStamp = "03de34cc-b48c-4550-a451-3e5356a3ce66",
+                            SecurityStamp = "80bbd74b-7771-425e-8200-d5bc7f0d14d2",
                             TwoFactorEnabled = false,
                             UserName = "user01"
                         },
@@ -190,7 +189,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "11df1678-e026-4ad8-993e-ae09f3929b23",
+                            ConcurrencyStamp = "14ed4681-b09d-4bb4-a08c-88b481541bde",
                             CreatedAt = new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc),
                             Email = "convid@vinhos.pt",
                             EmailConfirmed = true,
@@ -198,11 +197,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "CONVID@VINHOS.PT",
                             NormalizedUserName = "CONVIDADO",
-                            PasswordHash = "AQAAAAIAAYagAAAAEO2T0PlxnwJc5sGHqyahSRlR+E06W84dNR9SMMDgDysuMK6d8MRoOhGKAW3tp2wYUg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJr5vYU58pFpIfQo46/Qx+hnHySfA3oXQ6zBmO97Eg0tla0zVvYMwlndgpGxTfzFGA==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 5,
                             Role = "User",
-                            SecurityStamp = "b741c082-e69c-4930-8cc6-87df84d1724b",
+                            SecurityStamp = "9be5c624-fdb8-40fe-b314-c333f30ca091",
                             TwoFactorEnabled = false,
                             UserName = "convidado"
                         },
@@ -210,7 +209,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "29c1584f-9f11-4c6b-b6c3-5ffc2ea8bc2b",
+                            ConcurrencyStamp = "9089247a-8c9a-4c35-abfc-69724d0e782d",
                             CreatedAt = new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc),
                             Email = "guest2@vinhos.pt",
                             EmailConfirmed = true,
@@ -218,11 +217,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "GUEST2@VINHOS.PT",
                             NormalizedUserName = "GUEST2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEO7M8yS/6bLcctRf+0p3vbvB+itNF+fmItz6CweYWsHSEqnykEOuSphzFrRvaUj4PA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEVBHIB3/xzTwGP68PJi+FpoExuR+MkWP2E1+mluP9Lw8vw/w0Z7FeZRy1qA8tmKgw==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 6,
                             Role = "User",
-                            SecurityStamp = "1cc6ab5c-5e3e-4dce-92d4-c22b6c2a018b",
+                            SecurityStamp = "8f156928-b31f-44b8-a44b-2ed5f9d1a6de",
                             TwoFactorEnabled = false,
                             UserName = "guest2"
                         });
@@ -232,18 +231,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comprador")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DataHoraVenda")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("QuantidadeVendida")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -306,25 +305,54 @@ namespace AppVinhosFinal.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AppVinhosFinal.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("QuintaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("AppVinhosFinal.Models.PedidoVinho", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("IdPedido")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdVinho")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Tipo")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -501,18 +529,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataAprovacao")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("DataPedido")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Estado")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -602,16 +630,16 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("NumeroMaxVinhoFrio")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -663,29 +691,29 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CapacidadeFria")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Estado")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdQuinta")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("QuantidadeFria")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -697,7 +725,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 1,
-                            CapacidadeFria = 10,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 1,
                             Nome = "Tinto Clássico",
@@ -707,7 +735,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 2,
-                            CapacidadeFria = 5,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 1,
                             Nome = "Branco Seco",
@@ -717,7 +745,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 3,
-                            CapacidadeFria = 20,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 1,
                             Nome = "Rosé Alegre",
@@ -727,7 +755,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 4,
-                            CapacidadeFria = 30,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 1,
                             Nome = "Espumante Delicado",
@@ -747,7 +775,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 6,
-                            CapacidadeFria = 25,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 2,
                             Nome = "Branco Floral",
@@ -757,7 +785,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 7,
-                            CapacidadeFria = 35,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 2,
                             Nome = "Rosé de Verão",
@@ -767,7 +795,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 8,
-                            CapacidadeFria = 50,
+                            CapacidadeFria = 0,
                             Estado = 1,
                             IdQuinta = 2,
                             Nome = "Espumante Brut",
@@ -777,7 +805,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 9,
-                            CapacidadeFria = 15,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 3,
                             Nome = "Tinto Reserva",
@@ -787,7 +815,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 10,
-                            CapacidadeFria = 45,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 3,
                             Nome = "Branco Suave",
@@ -797,7 +825,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 11,
-                            CapacidadeFria = 60,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 3,
                             Nome = "Rosé Primavera",
@@ -807,7 +835,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 12,
-                            CapacidadeFria = 50,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 3,
                             Nome = "Espumante Rosé",
@@ -817,7 +845,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 13,
-                            CapacidadeFria = 20,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 4,
                             Nome = "Tinto Envelhecido",
@@ -827,7 +855,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 14,
-                            CapacidadeFria = 30,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 4,
                             Nome = "Branco Cítrico",
@@ -837,7 +865,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 15,
-                            CapacidadeFria = 25,
+                            CapacidadeFria = 0,
                             Estado = 1,
                             IdQuinta = 4,
                             Nome = "Rosé Aromático",
@@ -847,7 +875,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 16,
-                            CapacidadeFria = 80,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 4,
                             Nome = "Espumante Premium",
@@ -857,7 +885,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 17,
-                            CapacidadeFria = 35,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 5,
                             Nome = "Tinto Ensolarado",
@@ -867,7 +895,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 18,
-                            CapacidadeFria = 70,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 5,
                             Nome = "Branco Seco Especial",
@@ -877,7 +905,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 19,
-                            CapacidadeFria = 45,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 5,
                             Nome = "Rosé Tropical",
@@ -887,7 +915,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 20,
-                            CapacidadeFria = 60,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 5,
                             Nome = "Espumante de Honra",
@@ -897,7 +925,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 21,
-                            CapacidadeFria = 40,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 6,
                             Nome = "Tinto Forte",
@@ -907,7 +935,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 22,
-                            CapacidadeFria = 50,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 6,
                             Nome = "Branco Frutado",
@@ -917,7 +945,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 23,
-                            CapacidadeFria = 60,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 6,
                             Nome = "Rosé Encantado",
@@ -927,7 +955,7 @@ namespace AppVinhosFinal.Migrations
                         new
                         {
                             Id = 24,
-                            CapacidadeFria = 80,
+                            CapacidadeFria = 0,
                             Estado = 0,
                             IdQuinta = 6,
                             Nome = "Espumante Real",
@@ -940,28 +968,27 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -970,18 +997,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -994,18 +1021,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1017,16 +1044,16 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -1038,10 +1065,10 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1053,16 +1080,16 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 

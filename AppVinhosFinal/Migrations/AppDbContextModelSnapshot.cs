@@ -3,8 +3,8 @@ using System;
 using AppVinhosFinal.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,77 +18,77 @@ namespace AppVinhosFinal.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.17")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("AppVinhosFinal.Entities.UserAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("MustChangePassword")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("QuintaId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -97,8 +97,7 @@ namespace AppVinhosFinal.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.HasIndex("QuintaId");
 
@@ -109,7 +108,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a4633d7f-e6ec-4311-a32f-94a5b64c1f0d",
+                            ConcurrencyStamp = "15275553-15f4-44eb-a292-cb623faa36a2",
                             CreatedAt = new DateTime(2025, 7, 11, 7, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@vinhos.pt",
                             EmailConfirmed = true,
@@ -117,10 +116,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "ADMIN@VINHOS.PT",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMNcrTkkRPwefWPr5TcVOdhqoVEpY5kkf3iYptxbJ4p9tTSkLBu38xIqW8S04XUBSg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK+Qb7TMU4hjo5E8s8VnJEKEnkHViHcN8h/ei9H5XsYFc4vQv9q2VpfjPembKjR0Vw==",
                             PhoneNumberConfirmed = false,
                             Role = "Admin",
-                            SecurityStamp = "8516cc6a-bfa5-4ef3-ac37-6522ea913bb9",
+                            SecurityStamp = "a929fc2f-39a3-4dc4-a486-bf6e7173f599",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -128,7 +127,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c830f1d3-ad09-4192-b199-3b9e666199c1",
+                            ConcurrencyStamp = "119987aa-d51e-4059-943e-95fa9e68742b",
                             CreatedAt = new DateTime(2025, 7, 11, 8, 0, 0, 0, DateTimeKind.Utc),
                             Email = "staff01@vinhos.pt",
                             EmailConfirmed = true,
@@ -136,10 +135,10 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "STAFF01@VINHOS.PT",
                             NormalizedUserName = "STAFF01",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBTK4ReXHnDf19RcquDavLTEVvnmEKiMLM5zWvhWuDHgWlbPwJFX9he5wDIn8GcCQQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAnM9CgGU3teRP2gxoZg0KuMMduD4l5LiRoSbBppnmAMrQvkbbQ8NiokOGTLQzRtZw==",
                             PhoneNumberConfirmed = false,
                             Role = "Staff",
-                            SecurityStamp = "b340aa6f-a7e6-48a9-a76b-abc62d6ec6ec",
+                            SecurityStamp = "ad692589-1309-4578-a8d0-d5a8325c48bb",
                             TwoFactorEnabled = false,
                             UserName = "staff01"
                         },
@@ -147,7 +146,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2a807b23-765c-4bbc-9b5a-8dd30a2dee2f",
+                            ConcurrencyStamp = "9e1e31e8-ded1-4eb2-8ff0-d202e0ca1109",
                             CreatedAt = new DateTime(2025, 7, 11, 9, 0, 0, 0, DateTimeKind.Utc),
                             Email = "visit1@vinhos.pt",
                             EmailConfirmed = true,
@@ -155,11 +154,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "VISIT1@VINHOS.PT",
                             NormalizedUserName = "VISITANTE1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEChhfpOMzuD8TYEo4LNuL3aoCaV1ozkEVu4xbIrquwdHRlEfR33UyWtjAelA8KfJmQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEI2FIcefiyRDoI1eoTfW9sUasKVMa1qe7+yKiXbnsiUSsPJl2awXhiTvV6ZdUY8EqQ==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 2,
                             Role = "User",
-                            SecurityStamp = "f880de55-1fea-4e41-9c19-4633ed56eeec",
+                            SecurityStamp = "4d36d13a-fcd9-4f82-b790-7fdc622019a2",
                             TwoFactorEnabled = false,
                             UserName = "visitante1"
                         },
@@ -167,7 +166,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f7376f75-f836-4dec-8f5e-5c33be9bcf50",
+                            ConcurrencyStamp = "234785bd-b4bf-4384-b20e-be4700396434",
                             CreatedAt = new DateTime(2025, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc),
                             Email = "user01@vinhos.pt",
                             EmailConfirmed = true,
@@ -175,11 +174,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "USER01@VINHOS.PT",
                             NormalizedUserName = "USER01",
-                            PasswordHash = "AQAAAAIAAYagAAAAECxuVR+aA9LhbvSq1rViGUNNAtCB02mx8bGeKKd9D5BbSmpoCQnjAi+8SglHZcws5A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDoE8RrA4wuU5MnRBgac/J6NIa0/KVcWS8X2pjkUXr8AMh29rlaVztfuSktpJUTK1g==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 1,
                             Role = "User",
-                            SecurityStamp = "d8dff279-13a5-4f2e-b4e8-f6c6003ddede",
+                            SecurityStamp = "80bbd74b-7771-425e-8200-d5bc7f0d14d2",
                             TwoFactorEnabled = false,
                             UserName = "user01"
                         },
@@ -187,7 +186,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bd911641-3b59-44e5-be5a-3185f2634e34",
+                            ConcurrencyStamp = "14ed4681-b09d-4bb4-a08c-88b481541bde",
                             CreatedAt = new DateTime(2025, 7, 10, 16, 45, 0, 0, DateTimeKind.Utc),
                             Email = "convid@vinhos.pt",
                             EmailConfirmed = true,
@@ -195,11 +194,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = false,
                             NormalizedEmail = "CONVID@VINHOS.PT",
                             NormalizedUserName = "CONVIDADO",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKWkbB+dBe5jXIF4SQPWfLx7OnHIGaA6xCHpUvO/2DvG5wmE0cAlpHCTD0pIFQLMZQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJr5vYU58pFpIfQo46/Qx+hnHySfA3oXQ6zBmO97Eg0tla0zVvYMwlndgpGxTfzFGA==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 5,
                             Role = "User",
-                            SecurityStamp = "6cb184da-c9c0-4180-8d50-0518164c16b7",
+                            SecurityStamp = "9be5c624-fdb8-40fe-b314-c333f30ca091",
                             TwoFactorEnabled = false,
                             UserName = "convidado"
                         },
@@ -207,7 +206,7 @@ namespace AppVinhosFinal.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81102241-232a-4334-b2e4-3428a82284ec",
+                            ConcurrencyStamp = "9089247a-8c9a-4c35-abfc-69724d0e782d",
                             CreatedAt = new DateTime(2025, 7, 9, 12, 20, 0, 0, DateTimeKind.Utc),
                             Email = "guest2@vinhos.pt",
                             EmailConfirmed = true,
@@ -215,11 +214,11 @@ namespace AppVinhosFinal.Migrations
                             MustChangePassword = true,
                             NormalizedEmail = "GUEST2@VINHOS.PT",
                             NormalizedUserName = "GUEST2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDYlwbU0Y5vVgBtb1xAC/Wb8gMk3+97YqmWQx+bLu06qgPPZ6I7FumMvIBI+bjjaSw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEVBHIB3/xzTwGP68PJi+FpoExuR+MkWP2E1+mluP9Lw8vw/w0Z7FeZRy1qA8tmKgw==",
                             PhoneNumberConfirmed = false,
                             QuintaId = 6,
                             Role = "User",
-                            SecurityStamp = "a475d617-a7a9-4a07-837e-9e5bfb39b922",
+                            SecurityStamp = "8f156928-b31f-44b8-a44b-2ed5f9d1a6de",
                             TwoFactorEnabled = false,
                             UserName = "guest2"
                         });
@@ -229,18 +228,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comprador")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DataHoraVenda")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("QuantidadeVendida")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -307,25 +306,25 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Direction")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("QuintaId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -336,21 +335,21 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("IdPedido")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdVinho")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Tipo")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -527,18 +526,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataAprovacao")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("DataPedido")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Estado")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -628,16 +627,16 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("NumeroMaxVinhoFrio")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -689,29 +688,29 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CapacidadeFria")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Estado")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdQuinta")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("QuantidadeFria")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -966,28 +965,27 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -996,18 +994,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1020,18 +1018,18 @@ namespace AppVinhosFinal.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1043,16 +1041,16 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -1064,10 +1062,10 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1079,16 +1077,16 @@ namespace AppVinhosFinal.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 

@@ -17,7 +17,7 @@ namespace AppVinhosFinal.Models
 
         public string Role { get; set; } = "User"; // e.g., "Admin", "User", "Staff" or "CEO"
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [AllowNull]
         public int? QuintaId { get; set; }

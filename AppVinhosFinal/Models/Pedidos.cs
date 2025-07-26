@@ -8,7 +8,7 @@ namespace AppVinhosFinal.Models
         [Key]
         public int Id { get; set; }
 
-        public DateTime DataPedido { get; set; } = DateTime.Now;
+        public DateTime DataPedido { get; set; } = DateTime.UtcNow;
 
         public DateTime? DataAprovacao { get; set; }
 
