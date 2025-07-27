@@ -1,4 +1,4 @@
-using AppVinhosFinal.Entities;
+Ôªøusing AppVinhosFinal.Entities;
 using AppVinhosFinal.Models;
 using AppVinhosFinal.Services;
 using AppVinhosFinal.Filters;
@@ -7,16 +7,23 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Resend;
 using AppVinhosFinal.Hubs;
+using DotNetEnv;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var builder = WebApplication.CreateBuilder(args);
+// 1) Carrega as vari√°veis do .env para o processo ANTES de criar o builder
+Env.Load();
 
-// 1. DbContext com Identity
+// 2) Cria o builder e adiciona tamb√©m as vari√°veis de ambiente
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+       .AddEnvironmentVariables(); // garante que .env (via Env.Load) seja lido
+
+// 3) DbContext com Identity, agora a usar a ConnectionString do .env
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Identity (regista automaticamente o cookie ìIdentity.Applicationî)
+// 4) Identity
 builder.Services.AddIdentity<UserAccount, IdentityRole<int>>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -35,31 +42,32 @@ builder.Services.AddScoped<
     IUserClaimsPrincipalFactory<UserAccount>,
     AppClaimsPrincipalFactory>();
 
-// 3. ConfiguraÁ„o do cookie do Identity
+// 5) Configura√ß√£o do cookie do Identity
 builder.Services.ConfigureApplicationCookie(opts =>
 {
-    // N√O mudar o esquema ó È o Identity.Application
     opts.Cookie.HttpOnly = true;
     opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    opts.Cookie.SameSite = SameSiteMode.None;   // Em localhost, pode precisar de None
+    opts.Cookie.SameSite = SameSiteMode.None;
     opts.LoginPath = "/Account/Login";
     opts.AccessDeniedPath = "/Account/Login";
 });
 
-// 4. Filtro global de ìmust change passwordî
+// 6) Filtro global de ‚Äúmust change password‚Äù
 builder.Services.AddScoped<RequirePasswordChangeAttribute>();
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.AddService<RequirePasswordChangeAttribute>();
 });
 
-// 5. Resend (e-mail)
+// 7) Resend (e-mail) ‚Äì as credenciais v√™m do .env
 builder.Services.Configure<ResendOptions>(builder.Configuration.GetSection("Resend"));
 var resendOpts = builder.Configuration.GetSection("Resend").Get<ResendOptions>()!;
 builder.Services.Configure<ResendClientOptions>(o => o.ApiToken = resendOpts.Key);
 builder.Services.AddHttpClient<ResendClient>();
 builder.Services.AddTransient<IResend, ResendClient>();
 builder.Services.AddTransient<IEmailSender, ResendService>();
+
+// 8) SignalR
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -78,10 +86,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// HUB real-time
+// Hub real‚Äëtime
 app.MapHub<NotificationHub>("/notificationHub");
 
-// Rotas
+// Rotas MVC
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
