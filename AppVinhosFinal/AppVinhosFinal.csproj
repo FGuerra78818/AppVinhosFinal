@@ -16,8 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Images\Facebook.png" />
-    <Content Remove="wwwroot\Images\Youtube.png" />
+	<Content Include="wwwroot\**\*">
+		<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+	</Content>
   </ItemGroup>
 
   <ItemGroup>
