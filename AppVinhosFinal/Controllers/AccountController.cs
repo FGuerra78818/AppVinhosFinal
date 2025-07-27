@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
+using System.Net;
 
 namespace AppVinhosFinal.Controllers
 {
@@ -115,7 +116,7 @@ namespace AppVinhosFinal.Controllers
                 .AppendLine("  <div class='content'>")
                 .AppendLine($"    <p>Olá <strong>{account.UserName}</strong>,</p>")
                 .AppendLine("    <p>A sua conta foi registada com sucesso.</p>")
-                .AppendLine("    <p><strong>Password temporária:</strong> <code>" + tempPassword + "</code></p>")
+                .AppendLine("    <p><strong>Password temporária:</strong> " + $"<code>{WebUtility.HtmlEncode(tempPassword)}</code></p>")
                 .AppendLine("    <p>Por favor altere-a no primeiro login</p>")
                 .AppendLine("  </div>")
                 .AppendLine("  <div class='footer'>")
@@ -250,11 +251,11 @@ namespace AppVinhosFinal.Controllers
             // Garante presença de cada tipo
             var required = new[]
             {
-            GetRandomChar(Upper),
-            GetRandomChar(Lower),
-            GetRandomChar(Digits),
-            GetRandomChar(Specials),
-        };
+                GetRandomChar(Upper),
+                GetRandomChar(Lower),
+                GetRandomChar(Digits),
+                GetRandomChar(Specials),
+            };
 
             // Todos os caracteres permitidos
             var allChars = Upper + Lower + Digits + Specials;
