@@ -12,7 +12,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace AppVinhosFinal.Controllers
 {
-    [Authorize(Roles = "User")]
     public class PedidosController : Controller
     {
         private readonly AppDbContext _context;
@@ -25,6 +24,7 @@ namespace AppVinhosFinal.Controllers
         }
 
         // GET: /Pedidos
+        [Authorize(Roles = "User")]
         public IActionResult Index()
         {
             // só traz os pedidos cuja Quinta dos vinhos pertence ao utilizador
@@ -44,6 +44,7 @@ namespace AppVinhosFinal.Controllers
         }
 
         // GET: /Pedidos/Details/5
+        [Authorize(Roles = "User")]
         public IActionResult Details(int id)
         {
             var pedido = _context.Pedidos
@@ -66,26 +67,36 @@ namespace AppVinhosFinal.Controllers
         }
 
         // GET: /Pedidos/Create
-        public IActionResult Create()
+        [Authorize(Roles = "User, Admin")]
+        public IActionResult Create(int? quintaId)
         {
-            if (!int.TryParse(User.FindFirst("QuintaId")?.Value, out var quintaId))
-                return Forbid();
+            // se for utilizador normal, lê da claim
+            if (!quintaId.HasValue)
+            {
+                if (!int.TryParse(User.FindFirst("QuintaId")?.Value, out var q))
+                    return Forbid();
+                quintaId = q;
+            }
 
-            ViewBag.Vinhos = CarregaVinhos(quintaId);
+            // Carrega vinhos só dessa quinta
+            ViewBag.Vinhos = CarregaVinhos(quintaId.Value);
 
+            // Guarda o id no ViewData para o POST (e para o hidden field)
+            ViewData["QuintaId"] = quintaId.Value;
+
+            // inicializa modelo
             var model = new Pedidos();
             model.PedidoVinhos.Add(new PedidoVinho());
             return View(model);
         }
 
         // POST: /Pedidos/Create
+        [Authorize(Roles = "User, Admin")]
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Pedidos model)
+        public async Task<IActionResult> Create(Pedidos model, int quintaId)
         {
-            if (!int.TryParse(User.FindFirst("QuintaId")?.Value, out var quintaId))
-                return Forbid();
-
-            var quinta = await _context.Quintas.FindAsync(quintaId);
+            var quinta = await _context.Quintas.FindAsync(quintaId)
+                 ?? throw new Exception("Quinta inválida");
             var nomeDaQuinta = quinta?.Nome;
 
             // filtra apenas itens com quantidade > 0
@@ -179,6 +190,7 @@ namespace AppVinhosFinal.Controllers
 
 
         // Extrai para método a carregar a lista de vinhos
+        [Authorize(Roles = "User, Admin")]
         private List<SelectListItem> CarregaVinhos(int quintaId)
         {
             return _context.Vinhos

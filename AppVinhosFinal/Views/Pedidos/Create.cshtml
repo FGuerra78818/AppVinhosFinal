@@ -14,6 +14,8 @@
         return new { value = v.Value, text = text, stock = stock };
     });
     var vinhosJson = JsonSerializer.Serialize(vinhosData);
+
+    var quintaId = ViewData["QuintaId"];
 }
 
 <style>
@@ -63,14 +65,19 @@
 <div class="bg-image"></div>
 <div class="content-wrapper container">
     <div class="mb-4">
-        <a asp-action="Index" class="btn btn-link text-decoration-none mb-3">
+        <button type="button"
+                class="btn btn-link text-decoration-none mb-3"
+                onclick="history.back();">
             <i class="bi bi-arrow-left"></i> Voltar
-        </a>
+        </button>
         <h2 class="mb-0">Novo Pedido</h2>
         <small class="text-muted">Preencha os detalhes do pedido</small>
     </div>
 
     <form id="pedidoForm" asp-action="Create" method="post">
+
+        <input type="hidden" name="QuintaId" value="@quintaId" />
+
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="card-title mb-4">
